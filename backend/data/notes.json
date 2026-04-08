@@ -1,0 +1,172 @@
+{
+  "notes": [
+    {
+      "id": "1",
+      "title": "Photosynthesis",
+      "content": "Photosynthesis is the process by which green plants and some other organisms use sunlight to synthesize foods from carbon dioxide and water. It generally involves the green pigment chlorophyll and generates oxygen as a byproduct. The light reactions occur in the thylakoid membranes, while the Calvin cycle takes place in the stroma of chloroplasts.",
+      "created_at": "2026-04-07T12:00:00",
+      "tags": [
+        "biology",
+        "plants",
+        "science"
+      ]
+    },
+    {
+      "id": "2",
+      "title": "Newton's Laws of Motion",
+      "content": "Newton's three laws of motion: First Law (Inertia) - An object at rest stays at rest unless acted upon by a force. Second Law - Force equals mass times acceleration (F=ma). Third Law - For every action, there is an equal and opposite reaction. These laws form the foundation of classical mechanics.",
+      "created_at": "2026-04-07T12:05:00",
+      "tags": [
+        "physics",
+        "mechanics",
+        "science"
+      ]
+    },
+    {
+      "id": "3",
+      "title": "World War II Overview",
+      "content": "World War II lasted from 1939 to 1945. It involved most of the world's nations divided into two opposing alliances: the Allies and the Axis powers. Key events include the invasion of Poland, the Battle of Stalingrad, D-Day (Normandy landings), and the atomic bombings of Hiroshima and Nagasaki. The war ended with the surrender of Germany and Japan.",
+      "created_at": "2026-04-07T12:10:00",
+      "tags": [
+        "history",
+        "war",
+        "world"
+      ]
+    }
+  ],
+  "history": [
+    {
+      "id": "22e35d40",
+      "question": "What is photosynthesis?",
+      "answer": "**Photosynthesis** is the process by which green plants and some other organisms use sunlight to synthesize foods from carbon dioxide and water. It generally involves the green pigment chlorophyll and generates oxygen as a byproduct. The light reactions occur in the thylakoid membranes, while the Calvin cycle takes place in the stroma of chloroplasts.",
+      "note_id": "1",
+      "asked_at": "2026-04-08T00:31:17.465732"
+    },
+    {
+      "id": "0e67e234",
+      "question": "hey",
+      "answer": "I couldn't find a strong match for your question in your notes. Try adding notes about: hey.",
+      "note_id": null,
+      "asked_at": "2026-04-08T00:50:21.447823"
+    },
+    {
+      "id": "468a0003",
+      "question": "what is world war 2",
+      "answer": "**World** **War** II lasted from 1939 to 1945. It involved most of the **world**'s nations divided into two opposing alliances: the Allies and the Axis powers. Key events include the invasion of Poland, the Battle of Stalingrad, D-Day (Normandy landings), and the atomic bombings of Hiroshima and Nagasaki. The **war** ended with the surrender of Germany and Japan.",
+      "note_id": "3",
+      "asked_at": "2026-04-08T00:50:40.319733"
+    },
+    {
+      "id": "1aeaa72f",
+      "question": "how can you help me?",
+      "answer": "I couldn't understand your question. Could you rephrase it with more specific terms?",
+      "note_id": null,
+      "asked_at": "2026-04-08T00:51:06.696238"
+    },
+    {
+      "id": "803965d2",
+      "question": "World War 2",
+      "answer": "**World** **War** II lasted from 1939 to 1945. It involved most of the **world**'s nations divided into two opposing alliances: the Allies and the Axis powers. Key events include the invasion of Poland, the Battle of Stalingrad, D-Day (Normandy landings), and the atomic bombings of Hiroshima and Nagasaki. The **war** ended with the surrender of Germany and Japan.",
+      "note_id": "3",
+      "asked_at": "2026-04-08T00:51:47.605984"
+    },
+    {
+      "id": "b700a05f",
+      "question": "hello",
+      "answer": "I couldn't find a strong match for your question in your notes. Try adding notes about: hello.",
+      "note_id": null,
+      "asked_at": "2026-04-08T02:04:59.491179"
+    },
+    {
+      "id": "774fc790",
+      "question": "hello",
+      "answer": "⚠️ Failed to connect to OpenAI API. Check your key. Error: Error code: 429 - {'error': {'message': 'You excee...",
+      "note_id": "2",
+      "asked_at": "2026-04-08T02:05:19.427611"
+    },
+    {
+      "id": "cb863285",
+      "question": "hi",
+      "answer": "World War II lasted from 1939 to 1945. It involved most of the world's nations divided into two opposing alliances: the Allies and the Axis powers. Key events include the invasion of Poland, the Battle of Stalingrad, D-Day (Normandy landings), and the atomic bombings of **Hi**ros**hi**ma and Nagasaki. The war ended with the surrender of Germany and Japan.",
+      "note_id": "3",
+      "asked_at": "2026-04-08T03:58:02.486476"
+    },
+    {
+      "id": "63ca6d14",
+      "question": "hi",
+      "answer": "⚠️ OPENROUTER_API_KEY is not set in the .env file. Please add an API key to use Smart AI Mode.",
+      "note_id": null,
+      "asked_at": "2026-04-08T03:58:15.432079"
+    },
+    {
+      "id": "7f9a605b",
+      "question": "how are you?",
+      "answer": "⚠️ OPENROUTER_API_KEY is not set in the .env file. Please add an API key to use Smart AI Mode.",
+      "note_id": null,
+      "asked_at": "2026-04-08T03:58:53.301398"
+    },
+    {
+      "id": "8a4c03d6",
+      "question": "hey ! whatsup?",
+      "answer": "⚠️ Failed to connect to OpenAI API. Check your key. Error: Error code: 404 - {'error': {'message': 'No endpoi...",
+      "note_id": "2",
+      "asked_at": "2026-04-08T04:01:07.857455"
+    },
+    {
+      "id": "6a1b8152",
+      "question": "hey ! whatsup?",
+      "answer": "⚠️ Failed to connect to OpenAI API. Check your key. Error: Error code: 404 - {'error': {'message': 'No endpoi...",
+      "note_id": "2",
+      "asked_at": "2026-04-08T04:01:26.586255"
+    },
+    {
+      "id": "fdaaa97d",
+      "question": "hey",
+      "answer": "⚠️ Failed to connect to OpenAI API. Check your key. Error: Error code: 404 - {'error': {'message': 'No endpoi...",
+      "note_id": "3",
+      "asked_at": "2026-04-08T04:01:34.314436"
+    },
+    {
+      "id": "d4197c3d",
+      "question": "hello",
+      "answer": "⚠️ Failed to connect to OpenRouter API. Check your key & model. Error: Error code: 404 - {'error': {'message': 'No endpoints found for meta-llama/llama-3.1-8b-instruct:fre...",
+      "note_id": "2",
+      "asked_at": "2026-04-08T04:05:23.431487"
+    },
+    {
+      "id": "8d443257",
+      "question": "hello",
+      "answer": "⚠️ Failed to connect to OpenRouter API. Check your key & model. Error: Error code: 404 - {'error': {'message': 'No endpoints found for meta-llama/llama-3.1-8b-instruct:fre...",
+      "note_id": "2",
+      "asked_at": "2026-04-08T04:06:09.801143"
+    },
+    {
+      "id": "d246c485",
+      "question": "welcome",
+      "answer": "I couldn't find a strong match for your question in your notes. Try adding notes about: welcome.",
+      "note_id": null,
+      "asked_at": "2026-04-08T04:09:23.555056"
+    },
+    {
+      "id": "6317e8b7",
+      "question": "welcome",
+      "answer": " I'm here to help answer any questions you have based on the study notes you've provided. However, your question \"welcome\" is not clear as it doesn't relate to any of the given contexts. Could you please specify what topic or question you have in mind so I can provide an accurate answer?\n\nIf you have any questions related to Newton's Laws of Motion, physics, mechanics, or science in general, feel free to ask! The same goes for history, war, or the process of photosynthesis in plants. Let me know how I can assist you.",
+      "note_id": "2",
+      "asked_at": "2026-04-08T04:09:42.917132"
+    },
+    {
+      "id": "5a6ce129",
+      "question": "whats about newton 3rd law",
+      "answer": " Based on the context provided, Newton's Third Law of Motion states that \"For every action, there is an equal and opposite reaction.\" This means that when one object exerts a force on another object, the second object experiences a force that is equal in magnitude but opposite in direction. For example, when you push against a wall, the wall pushes back against you with an equal force. This law is fundamental to our understanding of physics and mechanics.",
+      "note_id": "2",
+      "asked_at": "2026-04-08T04:10:26.429124"
+    },
+    {
+      "id": "c8e9e697",
+      "question": "whats about newton 3rd law",
+      "answer": "**Newton**'s three **law**s of motion: First **Law** (Inertia) - An object at rest stays at rest unless acted upon by a force. Second **Law** - Force equals mass times acceleration (F=ma). Third **Law** - For every action, there is an equal and opposite reaction. These **law**s form the foundation of classical mechanics.",
+      "note_id": "2",
+      "asked_at": "2026-04-08T04:11:01.936487"
+    }
+  ]
+}
