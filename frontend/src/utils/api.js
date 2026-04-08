@@ -1,4 +1,4 @@
-const API_BASE = 'https://study-klej.onrender.com';
+const API_BASE = 'https://study-klej.onrender.com/api';
 
 async function request(url, options = {}) {
   const res = await fetch(`${API_BASE}${url}`, {
