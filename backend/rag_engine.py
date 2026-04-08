@@ -1,64 +1,63 @@
 import os
 from dotenv import load_dotenv
 import chromadb
-from openai import OpenAI
+import openai  # ✅ FIXED (old SDK)
 
 # Load environment variables
 load_dotenv()
 
-# Initialize ChromaDB (Persistent storage in data/ vector DB)
+# Initialize ChromaDB
 chroma_client = chromadb.PersistentClient(path="./data/chromadb")
 collection = chroma_client.get_or_create_collection(name="study_notes")
 
+# ✅ Setup OpenRouter (OLD SDK style)
+openai.api_key = os.getenv("OPENROUTER_API_KEY")
+openai.api_base = "https://openrouter.ai/api/v1"
+
+
 def sync_all_notes(notes):
-    """Clear and re-sync all notes from the JSON DB into the vector store."""
     try:
-        # First, clear the collection by getting all ids and deleting them
         existing = collection.get()
         if existing["ids"]:
             collection.delete(ids=existing["ids"])
-            
+
         if not notes:
             return
 
-        documents = []
-        metadatas = []
-        ids = []
+        documents, metadatas, ids = [], [], []
 
         for note in notes:
             content_block = f"Title: {note['title']}\nTags: {', '.join(note.get('tags', []))}\nContent: {note['content']}"
             documents.append(content_block)
-            metadatas.append({
-                "id": note["id"],
-                "title": note["title"],
-            })
+            metadatas.append(
+                {
+                    "id": note["id"],
+                    "title": note["title"],
+                }
+            )
             ids.append(note["id"])
 
-        collection.add(
-            documents=documents,
-            metadatas=metadatas,
-            ids=ids
-        )
+        collection.add(documents=documents, metadatas=metadatas, ids=ids)
+
         print(f"[RAG Engine] Synced {len(notes)} notes into vector store.")
+
     except Exception as e:
         print(f"[RAG Engine Error] Failed to sync notes: {e}")
 
 
 def add_note_to_vector_store(note):
-    """Add a single note to the vector store."""
     try:
         content_block = f"Title: {note['title']}\nTags: {', '.join(note.get('tags', []))}\nContent: {note['content']}"
         collection.add(
             documents=[content_block],
             metadatas=[{"id": note["id"], "title": note["title"]}],
-            ids=[note["id"]]
+            ids=[note["id"]],
         )
     except Exception as e:
         print(f"[RAG Engine Error] Failed to add note {note['id']}: {e}")
 
 
 def delete_note_from_vector_store(note_id):
-    """Delete a note from the vector store."""
     try:
         collection.delete(ids=[note_id])
     except Exception as e:
@@ -66,83 +65,73 @@ def delete_note_from_vector_store(note_id):
 
 
 def generate_smart_answer(question):
-    """
-    RAG Pipeline:
-    1. Embed question and retrieve top 3 similar notes.
-    2. Pass retrieved context to an LLM via OpenRouter to generate answer.
-    """
     api_key = os.getenv("OPENROUTER_API_KEY")
+
     if not api_key:
         return {
-            "answer": "⚠️ OPENROUTER_API_KEY is not set in the .env file. Please add an API key to use Smart AI Mode.",
+            "answer": "⚠️ OPENROUTER_API_KEY is missing.",
             "matched_note": None,
             "keywords": [],
-            "related_notes": []
+            "related_notes": [],
         }
 
-    # 1. Retrieve Context from Vector Store
+    # 🔍 Retrieve context
     try:
         results = collection.query(
-            query_texts=[question],
-            n_results=min(3, collection.count())
+            query_texts=[question], n_results=min(3, collection.count())
         )
     except Exception as e:
         return {
-            "answer": f"⚠️ Failed to query vector database: {e}",
+            "answer": f"⚠️ Vector DB error: {e}",
             "matched_note": None,
             "keywords": [],
-            "related_notes": []
+            "related_notes": [],
         }
 
-    if not results['documents'] or not results['documents'][0]:
-         return {
-            "answer": "I don't have enough information in your notes to answer this question.",
+    if not results["documents"] or not results["documents"][0]:
+        return {
+            "answer": "No relevant notes found.",
             "matched_note": None,
             "keywords": [],
-            "related_notes": []
+            "related_notes": [],
         }
 
-    retrieved_docs = results['documents'][0]
-    retrieved_metadata = results['metadatas'][0]
+    docs = results["documents"][0]
+    meta = results["metadatas"][0]
 
-    # Combine context
-    context = "\n\n---\n\n".join(retrieved_docs)
+    context = "\n\n---\n\n".join(docs)
 
-    # 2. Call LLM
+    # 🤖 OpenRouter call (FIXED)
     try:
-        client = OpenAI(
-            base_url="https://openrouter.ai/api/v1",
-            api_key=api_key
-        )
-        response = client.chat.completions.create(
-            model=os.getenv("OPENROUTER_MODEL", "openrouter/auto"), 
+        response = openai.ChatCompletion.create(
+            model=os.getenv("OPENROUTER_MODEL", "openrouter/auto"),
             messages=[
-                {"role": "system", "content": "You are a smart, helpful study assistant. Use the provided context from the user's study notes to answer their question accurately. If the context doesn't contain the exact answer, use it to infer or answer to the best of your ability, but clarify if information is missing from their notes."},
-                {"role": "user", "content": f"Context notes:\n{context}\n\nQuestion: {question}"}
+                {
+                    "role": "system",
+                    "content": "You are a smart study assistant. Use the provided notes to answer clearly.",
+                },
+                {
+                    "role": "user",
+                    "content": f"Context:\n{context}\n\nQuestion: {question}",
+                },
             ],
             temperature=0.3,
-            max_tokens=300
+            max_tokens=300,
         )
-        
-        answer_text = response.choices[0].message.content
+
+        answer_text = response["choices"][0]["message"]["content"]
 
     except Exception as e:
         return {
-            "answer": f"⚠️ Failed to connect to OpenRouter API. Check your key & model. Error: {str(e)[:100]}...",
-            "matched_note": retrieved_metadata[0] if retrieved_metadata else None,
+            "answer": f"⚠️ OpenRouter error: {str(e)}",
+            "matched_note": meta[0] if meta else None,
             "keywords": [],
-            "related_notes": retrieved_metadata[1:] if len(retrieved_metadata) > 1 else []
+            "related_notes": meta[1:] if len(meta) > 1 else [],
         }
-
-    # Structure Output (Matching existing API format but with rich RAG data)
-    best_match = retrieved_metadata[0] if retrieved_metadata else None
-    
-    # Send up to 2 related notes
-    related = retrieved_metadata[1:3] if len(retrieved_metadata) > 1 else []
 
     return {
         "answer": answer_text,
-        "matched_note": best_match,
-        "keywords": [], # Empty keywords to signal frontend it's "Smart Mode" formatting
-        "related_notes": related
+        "matched_note": meta[0] if meta else None,
+        "keywords": [],
+        "related_notes": meta[1:3] if len(meta) > 1 else [],
     }
