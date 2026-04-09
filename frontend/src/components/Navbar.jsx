@@ -20,7 +20,7 @@ export default function Navbar() {
             <HiOutlineSparkles className="text-white text-base" />
           </div>
           <span className="text-base sm:text-lg font-bold text-white tracking-tight">
-            Study<span className="gradient-text">Brain</span>
+            Smart AI <span className="gradient-text"> Study Assistant</span>
           </span>
         </Link>
 
@@ -51,11 +51,10 @@ function NavLink({ to, current, children }) {
   return (
     <Link
       to={to}
-      className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all ${
-        isActive
-          ? 'gradient-bg text-white shadow-lg shadow-purple-500/25'
-          : 'text-slate-400 hover:text-white hover:bg-white/5'
-      }`}
+      className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium transition-all ${isActive
+        ? 'gradient-bg text-white shadow-lg shadow-purple-500/25'
+        : 'text-slate-400 hover:text-white hover:bg-white/5'
+        }`}
     >
       {children}
     </Link>

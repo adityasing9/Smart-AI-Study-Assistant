@@ -68,8 +68,8 @@ export default function LandingPage() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight mb-5 leading-tight"
           >
-            Your AI{' '}
-            <span className="gradient-text">Study Brain</span>
+            Your {' '}
+            <span className="gradient-text">Smart AI Study Assistant</span>
           </motion.h1>
 
           {/* Subtext */}
@@ -199,8 +199,8 @@ export default function LandingPage() {
       {/* ───────── Footer ───────── */}
       <footer className="px-6 py-6 sm:py-8 border-t border-white/5">
         <div className="max-w-4xl mx-auto flex items-center justify-between text-xs text-slate-500">
-          <span>© 2026 StudyBrain. Built with AI.</span>
-          <span>Made with 💜</span>
+          <span>© 2026 Smart AI Study Assistant</span>
+          <span> </span>
         </div>
       </footer>
     </div>
