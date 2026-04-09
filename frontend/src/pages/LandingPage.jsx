@@ -200,7 +200,7 @@ export default function LandingPage() {
       <footer className="px-6 py-6 sm:py-8 border-t border-white/5">
         <div className="max-w-4xl mx-auto flex items-center justify-between text-xs text-slate-500">
           <span>© 2026 Smart AI Study Assistant</span>
-          <span> </span>
+          <span></span>
         </div>
       </footer>
     </div>
