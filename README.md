@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="./banner.png" alt="Smart AI Study Assistant Banner" width="100%"/>
+</div>
+
 # 🧠 Smart AI Study Assistant
 
 ![Smart AI Study Assistant](https://img.shields.io/badge/Status-Live-success) ![React](https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB) ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi) ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat&logo=supabase&logoColor=white) ![Vercel](https://img.shields.io/badge/Vercel-000000?style=flat&logo=vercel&logoColor=white)
