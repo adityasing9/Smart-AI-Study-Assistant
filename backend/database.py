@@ -44,6 +44,19 @@ def get_all_notes():
     return sorted(db["notes"], key=lambda n: n["created_at"], reverse=True)
 
 
+def get_documents():
+    """Return unique documents extracted from notes."""
+    db = _read_db()
+    docs = {}
+    for n in db["notes"]:
+        if n.get("document_id"):
+            docs[n["document_id"]] = {
+                "document_id": n["document_id"],
+                "document_title": n.get("document_title", "Untitled Document")
+            }
+    return list(docs.values())
+
+
 def search_notes(query: str):
     """Search notes by title or content (case-insensitive)."""
     query_lower = query.lower()
@@ -63,7 +76,7 @@ def get_note_by_id(note_id: str):
     return None
 
 
-def add_note(title: str, content: str, tags: list[str] | None = None):
+def add_note(title: str, content: str, tags: list[str] | None = None, document_id: str | None = None, document_title: str | None = None):
     """Add a new note and return it."""
     db = _read_db()
     note = {
@@ -72,6 +85,8 @@ def add_note(title: str, content: str, tags: list[str] | None = None):
         "content": content.strip(),
         "created_at": datetime.now().isoformat(),
         "tags": tags or [],
+        "document_id": document_id,
+        "document_title": document_title
     }
     db["notes"].append(note)
     _write_db(db)

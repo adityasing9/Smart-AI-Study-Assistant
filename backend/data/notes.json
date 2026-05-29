@@ -12,17 +12,6 @@
       ]
     },
     {
-      "id": "2",
-      "title": "Newton's Laws of Motion",
-      "content": "Newton's three laws of motion: First Law (Inertia) - An object at rest stays at rest unless acted upon by a force. Second Law - Force equals mass times acceleration (F=ma). Third Law - For every action, there is an equal and opposite reaction. These laws form the foundation of classical mechanics.",
-      "created_at": "2026-04-07T12:05:00",
-      "tags": [
-        "physics",
-        "mechanics",
-        "science"
-      ]
-    },
-    {
       "id": "3",
       "title": "World War II Overview",
       "content": "World War II lasted from 1939 to 1945. It involved most of the world's nations divided into two opposing alliances: the Allies and the Axis powers. Key events include the invasion of Poland, the Battle of Stalingrad, D-Day (Normandy landings), and the atomic bombings of Hiroshima and Nagasaki. The war ended with the surrender of Germany and Japan.",
@@ -32,6 +21,405 @@
         "war",
         "world"
       ]
+    },
+    {
+      "id": "23a1b8aa",
+      "title": "Test Note",
+      "content": "This is a test note.",
+      "created_at": "2026-05-29T23:16:35.956535",
+      "tags": []
+    },
+    {
+      "id": "b43e06f7",
+      "title": "ai",
+      "content": "1\nX = 3\nY = 5\nZ = 4\nvisit ed = set()\ndef dfs(sta te, path):\n    if sta te in visit ed:\n        return F alse\n    visit ed.add(sta te)\n    path.append(sta te)\n    x, y = sta te\n    # Goal check\n    if x == Z or y == Z:\n        prin t(\"Solution P ath:\")\n        for st ep in pa th:\n            prin t(step)\n        return T rue\n    # Possible mo ves\n    possible _mo ves = [\n        (X, y),  # Fill X\n        (x, Y),  # Fill Y\n        (0, y),  # Empty X\n        (x, 0),  # Empty Y\n        # Pour X -> Y\n        (x - min(x , Y - y),\n         y + min(x , Y - y)),\n        # Pour Y -> X\n        (x + min(y , X - x),\n         y - min(y , X - x))\n    ]\n    for mo ve in possible _mo ves:\n        if dfs(mo ve, path.copy()):\n            return T rue\n    return F alse\ndfs((0 , 0), [])\n2\nfrom collections import deque   \ndef v alid(m, c):\n    if m < 0 or c < 0 or m > 3 or c > 3:\n        return F alse   # Out of r ange\n    if m > 0 and c > m:\n        return F alse  \n    mr = 3 - m    # Missionaries on righ t\n    cr = 3 - c    # Cannibals on righ t\n    if mr > 0 and cr > mr:\n        return F alse   \n    return T rue\ndef bfs():\n    start = (3 ,3,1)    # Initial sta te\n    goal = (0 ,0,0)     # Goal sta te\n    q = deque([(start , [start])])   \n    visit ed = set([start])         \n    while q:\n        (m,c,b), pa th = q.poplef t()  \n        if (m, c,b) == g oal:\n            return pa th  # Return solution pa th\n        # Possible boa t mo ves\n        for dm, dc in [(1 ,0),(2, 0),(0 ,1),(0 ,2),(1 ,1)]:\n            if b == 1:   # Boa t on lef t\n                new = (m- dm, c -dc, 0)\n            else:        # Boa t on righ t\n                new = (m+dm, c+dc, 1)\n            if valid(new[0], new[1]) and new not in visit ed:\n                visit ed.add(new)\n                q.append((new , path + [new]))\nsolution = bfs()\nfor st ep in solution:\n    prin t(step)\n3a\nimport heapq\nh = {' A':11,'B':6,'C':5,'D':7,'E':3 ,'F':6,'G':5,'H':3 ,'I':1,'J':0}\ngraph = {\n'A':[('B ',6),('F ',3)],\n'B':[('C',3),('D ',2)],\n'C':[('E' ,5)],\n'D':[('E' ,8)],\n'E':[(' J',5)],\n'F':[('G',1),('H' ,7)],\n'G':[('I' ,3)],\n'H':[('I' ,2)],\n'I':[('J',3)],\n'J':[]\n}\ndef astar(start ,goal):\n    open=[(h[start],start)]\n    g={start:0}\n    parent={start:None}\n    while open:\n        f,node=heapq.heappop(open)\n        if node==g oal:\n            path=[]\n            while node:\n                path.append(node)\n                node=par ent[node]\n            return pa th[::- 1]\n        for n, c in gr aph[node]:\n            new=g[node]+c\n            if n not in g or new<g[n]:\n                g[n]=new\n                heapq.heappush(open,(new+h[n],n))\n                parent[n]=node            \nprin t(\"Optimal P ath :\" ,astar(' A','J'))\n3b\ngraph = {\n    'A':[(['B ','C'],1),(['D '],5)],\n    'B':[(['E'], 3)],\n    'C':[(['E'],1)],\n    'D':[(['G'],2)],\n    'E':[([' G'],5)],\n    'G':[]\n}\nsol = {}\ndef ao(n):\n    if n in sol:\n        return sol[n]\n    if not gr aph[n]:\n        sol[n] = (0 ,None)\n        return sol[n]\n    mc = floa t('in f')\n    bp = None\n    for p ,c in gr aph[n]:\n        tc = c\n        for x in p:\n            tc += ao(x)[0]\n        if tc < mc:\n            mc, bp = t c, p\n    sol[n] = (mc,bp)\n    return sol[n]\nao('A')\nprin t(\"Solution Gr aph:\")\nfor n,(c,p) in sol .items():\n    prin t(\"Node:\" ,n,\"Cost:\" ,c,\"Path:\",p)\n4\nN = 8\nboar d = [[0]*N f or _ in r ange(N)]\ndef sa fe(r, c):\n    for i in r ange(c):\n        if boar d[r][i]:\n            return F alse\n    for i, j in zip(r ange(r,-1,-1), range(c,- 1,-1)):\n        if boar d[i][j]:\n            return F alse\n    for i, j in zip(r ange(r,N), r ange(c,- 1,-1)):\n        if boar d[i][j]:\n            return F alse\n    return T rue\ndef solv e(c):\n    if c == N:\n        return T rue\n    for r in r ange(N):\n        if sa fe(r, c):\n            boar d[r][c] = 1\n            if solv e(c+1):\n                return T rue\n            boar d[r][c] = 0\n    return F alse\nif solv e(0):\n    for row in boar d:\n        prin t(' '.join(' Q' if x else ' .' for x in r ow))\nelse:\n    prin t(\"No solution \")\n5\ngraph = [\n    [0,10,15,20],\n    [10,0,35,25],\n    [15,35,0,30],\n    [20,25,30,0]\n]\ndef tsp(g, s):\n    n = len(g)\n    visit ed = [F alse]*n\n    path = [s]\n    visit ed[s] = T rue\n    cost = 0\n    cur = s\n    for _ in r ange(n-1):\n        m = floa t('in f')\n        nxt = - 1\n        for i in r ange(n):\n            if not visit ed[i] and g[cur][i] < m:\n                m = g[cur][i]\n                nxt = i\n        path.append(nxt)\n        visit ed[nxt] = T rue\n        cost += m\n        cur = nxt\n    cost += g[cur][s]\n    path.append(s)\n    return cost , path\ncost , path = tsp(gr aph, 0)\nprin t(\"Cost:\" , cost)\nprin t(\"Path:\", \" -> \" .join(map(str ,path)))\n7\ndef ne g(x):\n    return x[1:] if x .starts with(\"~\") else \"~\" + x\ndef r es(c1 , c2):\n    r = []\n    for a in c1:\n        for b in c2:\n            if a == ne g(b):\n                r.append([x f or x in c1 + c2 if x not in [a , b]])\n    return r\ndef solv e(kb):\n    c = [x .split(\"||\") f or x in kb]\n    while T rue:\n        n = set()\n        for i, a in enumer ate(c):\n            for b in c[i+1:]:\n                n.upda te(tuple(x) f or x in r es(a , b))\n        if not n:\n            return \" Satisfiable\"\n        if an y(len(x) == 0 f or x in n):\n            return \"Unsa tisfiable\"\n        c.extend([list(x) f or x in n])\nkb = [\n    \"P || Q || ~R\" ,\n    \"~P || R\" ,\n    \"~Q || R\" ,\n    \"~R || ~P || Q \"\n]\nprin t(solv e(kb))\nOUTPUT:Sa tisfiable\n#CASE2:\nkb = [\n    \"P\",\n    \"~P\"\n]\nOUTPUT:Unsa tisfiable\n6class F C:    def __init __(s,r,f):        s.r,s.f=r,set(f )    def apply(s):        while T rue:            n=set()            for a ,c in s .r:                if a.issubset(s .f):                    n.add(c)            if n.issubset(s .f):                break            s.f.upda te(n)rules=[({\"has _fur(tig er)\"}, \"mammal(tig er)\"),({\"has _feathers(penguin)\" ,\"lays_eggs(penguin)\"}, \"bird(penguin)\"),({\"la ys_eggs(sparr ow)\",\"has _feathers(sparr ow)\"}, \"bird(sparr ow)\"),({\"has _fur(ca t)\"},\"mammal(ca t)\")]facts=[\"has _fur(tig er)\", \"has _feathers(penguin)\" , \"lays_eggs(penguin)\" ,\"lays_eggs(sparr ow)\", \"has _fur(ca t)\"]fc=FC(rules ,facts)fc.apply()prin t(\"Deriv ed F acts:\" ,fc.f)class Backw ardChaining:    def __init __(self , rules , facts):        self.rules = rules        self.facts = set(f acts)    def is _fact(self , fact):        if fact in self .facts:            return T rue        for an t, cons in self .rules:            if cons == f act and all(self .is_fact(a) f or a in an t):                return T rue        return F alserules = [    ({\"has _fur(tig er)\"}, \"mammal(tig er)\"),    ({\"has _feathers(penguin)\" , \"lays_eggs(penguin)\"}, \"bir d(penguin)\"),    ({\"la ys_eggs(sparr ow)\", \"has _feathers(sparr ow)\"}, \"bir d(sparr ow)\"),    ({\"has _fur(ca t)\"}, \"mammal(ca t)\")]facts = {    \"has _fur(tig er)\", \"has _feathers(penguin)\" , \"lays_eggs(penguin)\" ,    \"lays_eggs(sparr ow)\", \"has _fur(ca t)\"}goals = [\"mammal(tig er)\", \"bir d(penguin)\" , \"bir d(sparr ow)\", \"mammal(ca t)\"]bc = Backw ardChaining(rules , facts)for g in g oals:    prin t(f\"Goal {g} {' can' if bc.is _fact(g) else ' cannot '} be deriv ed fr om the f acts .\")\n8\nscor es = [3 ,5,2,9]\ntree_depth = 2\ndef minimax(depth, node , isMax):\n    if depth == tr ee_depth:\n        return scor es[node]\n    if isMax:\n        return max(\n            minimax(depth+1 , node* 2, False),\n            minimax(depth+1 , node* 2+1, False)\n        )\n    else:\n        return min(\n            minimax(depth+1 , node* 2, True),\n            minimax(depth+1 , node* 2+1, True)\n        )\nprin t(\"Lea f Nodes:\" , scor es)\nprin t(\"Optimal V alue:\" , minimax(0 ,0,True))",
+      "created_at": "2026-05-29T23:18:57.315361",
+      "tags": [
+        "pdf-upload"
+      ]
+    },
+    {
+      "id": "053282a8",
+      "title": "kand2",
+      "content": "KBKKK107/207\nUSN 1 B Y\nBMSINSTITUTE OF TECHNOLOGY AND MANAGEMENT\n  (An Autonomous Institute aﬃliated to Visvesvaraya Technological University,Belagavi)\nSEMESTER END EXAMINATION QUESTION PAPER\nFirst Semester BE Degree Examination\nRegular / Make-up / Arrears / Supplementary \nBALAKE KANNADA\nTime: 1 hr.Max. Marks: 50\nNote:   1. Answer all FIFTY full questions, choosing ONE Correct option.\n2. The correct option is to be shaded in the provide OMR sheet only.\n3. There is no Negative Marking.\n4. Shading more than 1 option, will lead to rejection of  the particular question for scoring.\nQ. No Multiple Choice Questions Marks CO, RBT\nTranslate English word to Kannada\n01Colour: __________________\nA) Anna                 B) Balapa             C) Banna                    D ) \nBottle01 CO1, K2\n02Festival: __________________\nA) Nataka              B) Habba              C) Kathe                     D ) \nRatri01 CO1, K2\n03Cloth: __________________\nA) Batte                 B) Daara               C) Guruthu                 \nD) Kappu01 CO1, K2\n04Holiday: __________________\nA) Kaala                B) Tampu              C) Dina                      D ) \nRaja01 CO1, K2\n05Time: __________________\nA) Kandu               B) Samaya            C) Chikkudu               \nD) Doddadu01 CO1, K2\n06Expensive: __________________\nA) Sannudu            B) Beega               C) Kadmied                \nD) Dubari01 CO1, K2\n07Practice: __________________\nA) Karyakrama      B) Belaggee          C) Abhyasa                 \nD) Sadhane? 01 CO3, K2\n08Oﬃcer: __________________\nA) Pranshupalaru    B) Shikshaka       C) Karmika                 \nD) Adhikari01 CO1, K2\n09Fruits: __________________\nA) Besige               B) Tarakarigalu    C) Hannugalu              \nD) Pustakagalu?01 CO1, K2\n10Diﬃcult: __________________\nA) Kashta              B) Ishat                 C) Doora                      \nD) Hattira01 CO2, K2\nTranslate English Sentence to Kannada\n11Where did he go: __________________\nA) Neenu ellege hogidde         B) Neenu ellu hogabeda\nC) Neenu Oorige hogidya        D) Namaskara idhu \nBelagavina01 CO4, K3\n12Id I went to village: __________________\nA) Naanu cinimage hogidde    B) Naanu maduvege hogidde\nC) Neenu Oorige hogiddeya    D) Naanu Oorige hogidde01 CO4, K3\n13Why did you go?: __________________\nA) Elli hogidde     B) Etakke hogidde\nC) tavaga babde   D) tavag bartiya01 CO3, K3\n14Where your  house: __________________\nA) Neenu yaaru   B) Nimma mane yellide\nC) Yaru Neenu    D) Idhe namma mane01 CO3, K2\n15What is the reason sir: __________________\nA) Yenu Kaarana sir    B) Kaarana illa sir\nC) Karana idhe sir        D) Karana kodabeka sir01 CO3, K2\n16Thank you sir: __________________\nA) Paravagilla sir    B) Dhanyavadhagalu sir\nC) Ogi banni sir       D) Barabedi sir01 CO4, K2\n17Had your breakfast : __________________\nA) Adige aitha?    B) Tindhi aitha ?\nC) Elli hogidde     D) Yavag bartiya01 CO3, K2\n18When is your exam?: __________________\nA) Parikshe mugitha     B) Yavaga parikshe\nC) Parikshe beda   D) Prikshe beku01 CO4, K1\n19I am second child: __________________\nA) Naanu ondhaneya magu    B) Naanu avara magu\nC) Naanu naalakaneya maga   D) Naanu yeradaneya maga01 CO3, K3\n20Ok come fast to the college: __________________\nA) Aythu kaalejige bega baa     B) kaalejige bega barabeda\nC) kaaleju illa   D) kaaleju idhe01 CO4, K2\n21Black: __________________\nA) Kappu        B) Bili          C) Hasiru       D ) Kempu01 CO1, K1\n22Green: __________________\nA) Hasiru        B) Kesari      C) Kandu      D ) Neeli01 CO1, K1\n23Red: __________________\nA) Kappu        B) Neeli      C) Kempu       D) Nerale01 CO1, K1\n24Drama: __________________\nA) Cinima        B) Nataka       C) Suddi      D ) Dharavahi01 CO1, K2\n25Near: __________________\nA) Modalu        B) Hattira     C) Swalpa      D ) Swantha01 CO1, K2\n26Lesson: __________________\nA) Poem       B) Kavithe      C) Paata       D) Prasa01 CO1, K2\n27Onion: __________________\nA) Irulli        B) Bellulli       C) Badanekaayi      D ) \nThondekaayi01 CO1, K1\n28Chilli: __________________\nA) Badanekaayi        B) Irulli      C) Bellulli       D ) Menasina \nkaayi01 CO1, K1\n29Kid: __________________\nA) Magu      B) Shubhasanje      C) Prayogalaya     D ) Shubha \nratri01 CO1, K2\n30Name: __________________\nA) Nimma        B) Hesaru      C) Nanu       D ) Nammadu01 CO1, K3\nTranslate Kannada sentences to English\n31Aa Pustaka Yaradu: __________________\nA) Is ours        B) Whose book it is      C) Ours means       D ) \nNo that is maries01 CO3, K2\n32Adhu Anoopana pustaka: __________________\nA) That is Anoop’s Book       B) That Book is library     \n C) That Book is hostel           D) That is my Book01 CO4, K1\nYara Raju avanu: __________________\n33 A) Who is Raju        B) Who is that Raju     C ) My friend      \nD) My brother01 CO4, K3\n34Haudhu Neevalla banni: __________________\nA) Yes all of you                 B) I went to village      \nC) We also should come      D) When did you to 01 CO1, K1\n35Aa Pustaka nimmada?: ________________\nA) Is one may be        B) No          C) That book yours       D ) \nMy book01 CO1, K4\n36Room Ellide?: ________________\nA) Where is the room       B) That room         C ) Friend room   \nD) My room01 CO4, K4\n37Alli ondadaru ideya?: ________________\nA) Is there        B) Is there one          C) Is there three       D ) I \nthere four01 CO4, K1\n38Avaru elli idhare?: ________________\nA) What are they             B) Where are they         \nC) Why are you going     D) Where are you01 CO4, K2\n39Sari nodona bidi: ________________\nA) Leave it’s ok                                 B) I don’t want now         \nC) Ok we will see that tomorrow      D) Ok we will see now01 CO3, K2\n40Yavaga barthiya?: ________________\nA) When will you come?        B) Where are you          \nC) Where are you coming       D) How are you?01 CO4, K1\n41Ega naanu yen maadli?: ________________\nA) What should you do?        B) What shall I do now          01 CO3, K2\nC) What are you doing           D) Where are you diong\n42Avarige helodhu beda: ________________\nA) Don’t tell them                    B) Tell them about this          \nC) Why are you telling the       D) Don’t ask them01 CO4, K2\n43Sir neevu Oota maadi?: ________________\nA) Sir Don’t eat                  B) Sir have your lunch          \nC) Sir have your dinner      D) Sir please eat01 CO3, K1\n44Time Aaitha?: ________________\nA) Time is gone         B) Time is there         C ) Time is up      \nD) Time is there01 CO3, K1\n45Kaalegige raje kottidhare?: ________________\nA) Tomorrow is a holiday                    B) Holiday was not \ngiven to the college          \nC) Holiday is not given the college      D) Holiday is given to \nthe college01 CO3, K1\nFill in the blanks\n46 C ----- E\nA) D     B) F      C) J      D) N01 CO2, K1\n47G-----IÄ\nA) E     B) PÀ     C) H     D) C01 CO2, K2\n48PÀ------\nA) UÀ       B) R       C) gÀ      D) O01 CO2, K2\n49vÀ-----\nA) xÀ      B) l     C) AiÀÄ     D) zÀ01 CO2, K2\n50±À-----\nA) §      B) ¸À     C) ºÀ      D) µÀ01 CO2, K2\nCourse Outcomes (COs): \nCOs At the end of the course, the student will be able to \nCO-1 Understand the necessity of learning local language for a comfortable life.\nCO-2 Listen and understand the Kannada language properly.\nCO-3 Speak, read and write Kannada language as per requirement\nCO-4 Communicate (converse) in Kannada language in their daily life with Kannada speakers.\nCO-5 Speak in polite conversation.\nK1- Remembering     K2 - Understanding  K3 – A pplying K4- Analyzing     K 5 - Evaluating      K 6 -\nCreating\n“Success is the progressive realization of a worthy goal. ”\n* * * * * * * * * *",
+      "created_at": "2026-05-29T23:19:09.865753",
+      "tags": [
+        "pdf-upload"
+      ]
+    },
+    {
+      "id": "15bdbea1",
+      "title": "20251105_141832_144",
+      "content": "1*A*\n#include <st dio.h>\n#include <string.h>\nvoid brut eForcePatternMa tch(char T[], char P[]) {\n    int n = strlen(T);\n    int m = strlen(P);\n    int found = 0;\n    for (in t i = 0; i <= n - m; i++) {\n        int j = 0;\n        while (j < m && T[i + j] == P[j]) {\n            j++;\n        }\n        if (j == m) {\n            prin tf(\"P attern f ound a t inde x %d\\n \", i);\n            found = 1;\n        }\n    }\n    if (!f ound)\n        prin tf(\"P attern not f ound\\n \");\n}\nint main() {\n    char t ext[100], pa ttern[1 00];\n    prin tf(\"En ter text: \");\n    scan f(\"%s\" , text);\n    prin tf(\"En ter pa ttern: \");\n    scan f(\"%s\" , pattern);\n    brut eForcePatternMa tch(t ext, pattern);\n    return 0;\n}\n1*B\n#include <st dio.h>\n#include <time .h>\nint checkUnique(in t arr[], in t n){\n    int i, j;\n    for(i = 0; i < n; i++){\n        for(j = i + 1; j < n; j++){\n            if(arr[i] == arr[j]) {\n                return 0; / / Duplica te found\n            }\n        }\n    }\n    return 1; / / All elemen ts ar e unique\n}\nint main(){\n    int n, i;\n    prin tf(\"En ter number of elemen ts: \");\n    scan f(\"%d\" , &n);\n    int arr[n];\n    prin tf(\"En ter arr ay elemen ts:\\n \");\n    for(i = 0; i < n; i++){\n        scan f(\"%d\" , &arr[i]);\n    }\n    clock_ t start , end;\n    double time _taken;\n    start = clock();\n    int result = checkUnique(arr , n);\n    end = clock();\n    time _taken = (double)(end - start) / CL OCKS _PER_SE C;\n    if(result)\n        prin tf(\"All elemen ts ar e unique\\n \");\n    else\n        prin tf(\"Duplica te elemen ts found\\n \");\n    prin tf(\"Ex ecution T ime = %f seconds\\n \", time _taken);\n    return 0;\n}\n2\n#include <stdio.h>\nvoid swap(int* a, int* b);\nint partition(int arr[], int low, int high) {\n    int pivot = arr[high];\n    int i = low - 1;\n    for (int j = low; j <= high - 1; j++) {\n        if (arr[j] < pivot) {\n            i++;\n            swap(&arr[i], &arr[j]);\n        }\n    }\n    swap(&arr[i + 1], &arr[high]);\n    return i + 1;\n}\nvoid quickSort(int arr[], int low, int high) {\n    if (low < high) {\n        int pi = partition(arr, low, high);\n        quickSort(arr, low, pi - 1);\n        quickSort(arr, pi + 1, high);\n    }\n}\nvoid swap(int* a, int* b) {\n    int t = *a;\n    *a = *b;\n    *b = t;\n}\nint main() {\n    int n;\n    printf(\"Enter number of elements: \");\n    scanf(\"%d\", &n);\n    int arr[n];\n    printf(\"Enter %d elements:\\n\", n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &arr[i]);\n    }\n    quickSort(arr, 0, n - 1);\n    printf(\"Sorted array:\\n\");\n    for (int i = 0; i < n; i++) {\n        printf(\"%d \", arr[i]);\n    }\n    return 0;\n}\n3\n#inclu de <st dio.h>\n#include <st dlib.h>\n#include <time .h>\nvoid mer ge(int a[], in t l, int m, in t r){\n    int i=l, j=m+1 , k=l , temp[1 00000];\n    while(i<=m && j<=r)\n        temp[k++] = (a[i] < a[j]) ? a[i++] : a[j++];\n    while(i<=m) t emp[k++] = a[i++];\n    while(j<=r) t emp[k++] = a[j++];\n    for(i=l;i<=r;i++)\n        a[i] = t emp[i];\n}\nvoid mer gesort(in t a[], in t l, int r){\n    if(l<r){\n        int m=(l+r)/2;\n        mer gesort(a ,l,m);\n        mer gesort(a ,m+1 ,r);\n        mer ge(a,l,m,r);\n    }\n}\nint main(){\n    int n,i,a[1 00000];\n    clock_ t start ,end;\n    prin tf(\"En ter n: \");\n    scan f(\"%d\" ,&n);\n    for(i=0;i<n;i++)\n        a[i]=r and();    \n    start=clock();\n    mer gesort(a ,0,n-1);\n    end=clock();\n    prin tf(\"Time tak en = %f seconds\\n \",\n           (double)(end- start)/ CLOCKS _PER_SE C);\n    return 0;\n}\n4\n#inclu de <st dio.h>\nstruct Edg e {\n    int u, v , w;\n} e[20], t emp;\nint par ent[20];\nint find(in t i) {\n    while (par ent[i] != i)\n        i = par ent[i];\n    return i;\n}\nint uni(in t i, in t j) {\n    if (i != j) {\n        parent[j] = i;\n        return 1;\n    }\n    return 0;\n}\nint main() {\n    int n, m, i, j, cost = 0 , coun t = 0;\n    prin tf(\"En ter vertices and edg es: \");\n    scan f(\"%d%d\" , &n, &m);\n    for (i = 0; i < n; i++)\n        parent[i] = i;\n    prin tf(\"En ter u v w eigh t:\\n\");\n    for (i = 0; i < m; i++)\n        scan f(\"%d%d%d\" , &e[i]. u, &e[i]. v, &e[i]. w);\n    for (i = 0; i < m - 1; i++) {\n        for (j = 0; j < m - i - 1; j++) {\n            if (e[j]. w > e[j + 1]. w) {\n                temp = e[j];\n                e[j] = e[j + 1];\n                e[j + 1] = t emp;\n            }\n        }\n    }\n    prin tf(\"Edg es in MS T:\\n\");\n    for (i = 0; i < m; i++) {\n        int a = find(e[i]. u);\n        int b = find(e[i]. v);\n        if (uni(a , b)) {\n            prin tf(\"%d -- %d = %d\\n \", e[i]. u, e[i]. v, e[i]. w);\n            cost += e[i]. w;\n            coun t++;\n        }\n        if (coun t == n - 1)\n            break;\n    }\n    prin tf(\"Minimum Cost = %d\\n \", cost);\n    return 0;\n}\n5\n#include <st dio.h>\n#include <limits .h>\n#include <st dbool .h>\n#define V 5\nint minK ey(in t key[], bool mst[]) {\n    int min = INT _MAX, inde x;\n    for (in t i = 0; i < V ; i++)\n        if (!mst[i] && k ey[i] < min)\n            min = k ey[i], inde x = i;\n    return inde x;\n}\nvoid primMS T(int graph[V][V]) {\n    int par ent[V], k ey[V], cost = 0;\n    bool mst[V];\n    for (in t i = 0; i < V ; i++) {\n        key[i] = INT _MAX;\n        mst[i] = f alse;\n    }\n    key[0] = 0;\n    parent[0] = - 1;\n    for (in t i = 0; i < V - 1; i++) {\n        int u = minK ey(k ey, mst);\n        mst[u] = true;\n        for (in t v = 0; v < V ; v++) {\n            if (gr aph[u][v] && !mst[v] && gr aph[u][v] < k ey[v]) {\n                parent[v] = u;\n                key[v] = gr aph[u][v];\n            }\n        }\n    }\n    prin tf(\"Edg e \\tW eigh t\\n\");\n    for (in t i = 1; i < V ; i++) {\n        prin tf(\"%d - %d \\t%d\\n \", par ent[i], i, gr aph[i][par ent[i]]);\n        cost += gr aph[i][par ent[i]];\n    }\n    prin tf(\"Minimum Cost = %d\\n \", cost);\n}\nint main() {\n    int graph[V][V] = {\n        {0,2,0,6,0},\n        {2,0,3,8,5},\n        {0,3,0,0,7},\n        {6,8,0,0,9},\n        {0,5,7,9,0}\n    };\n    primMS T(gr aph);\n    return 0;\n}",
+      "created_at": "2026-05-29T23:37:42.143910",
+      "tags": [
+        "pdf-upload"
+      ],
+      "document_id": "doc_cbee5101",
+      "document_title": "20251105_141832_144"
+    },
+    {
+      "id": "b77e0e30",
+      "title": "test",
+      "content": "This is a test about machine learning and deep learning.",
+      "created_at": "2026-05-30T00:41:49.355033",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_51a9cd08",
+      "document_title": "test"
+    },
+    {
+      "id": "5fc7aa79",
+      "title": "DBMS_Mini_Project_Report_260527_093017734 - Part 1",
+      "content": "**VISVESVARAYA TECHNOLOGICAL UNIVERSITY, BELAGAVI**\n\n***[VTU University Seal Emblem]***\n\nA MINI-PROJECT REPORT\n\non\n\n“GLOBALCART – E-COMMERCE WEB APPLICATION”\n\n*Submitted in partial fulfillment of the academic requirements of the 4th semester Database Management Systems Laboratory*\n\n## BACHELOR OF ENGINEERING\n\nin\n\n## ARTIFICIAL INTELLIGENCE & MACHINE LEARNING\n\n**Submitted By:**\n\nAditya Singh (1TD24AI002)\n\nHarsha Vardhan U P (1BY25AI411) Vishal Kumar (1TD24AI188)\n\nChalapathi R (1BY25AI406)\n\n**Under the Guidance of:**\n\n**Prof. Amitha S K**\n\nAssistant Professor Dept. of Artificial Intelligence & Machine Learning\n\nBMSIT&M\n\n***[BMSIT&M Institution Logo]***\n\n## DEPARTMENT OF ARTIFICIAL INTELLIGENCE & MACHINE LEARNING BMS INSTITUTE OF TECHNOLOGY AND MANAGEMENT\n\n(Autonomous Institute Affiliated to VTU) Avalahalli, Yelahanka, Bengaluru – 560064.\n\n## ACADEMIC YEAR: 2025-2026\n\n**BMS INSTITUTE OF TECHNOLOGY AND MANAGEMENT**\n\n(Autonomous Institute Affiliated to VTU) Avalahalli, Yelahanka, Bengaluru – 560064.\n\n**Department of Artificial Intelligence & Machine Learning**\n\n**CERTIFICATE**",
+      "created_at": "2026-05-30T00:43:11.806491",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_e6dfaa49",
+      "document_title": "DBMS_Mini_Project_Report_260527_093017734"
+    },
+    {
+      "id": "8a15242a",
+      "title": "DBMS_Mini_Project_Report_260527_093017734 - Part 2",
+      "content": "This is to certify that the Database Management Systems Mini-Project entitled **“GlobalCart – E-Commerce Web Application”** has been successfully carried out by **Aditya Singh (1TD24AI002), Harsha Vardhan U P (1BY25AI411), Vishal Kumar (1TD24AI188), and Chalapathi R (1BY25AI406)**, who are bonafide students of BMS Institute of Technology and Management, an Autonomous Institute Affiliated to VTU. This work is submitted in partial fulfillment for the IV Semester B.E. Mini-Project assessment guidelines prescribed within the Department of Artificial Intelligence & Machine Learning under Visvesvaraya Technological University, Belagavi, during the academic year 2025-2026 (Even Semester).\n\nIt is verified that all structural corrections and technical suggestions indicated during initial assessments have been completely incorporated into this final report, and a copy has been deposited within the department's archival library. The project report is formally approved as satisfying the academic quality criteria mandatory for the award of the degree.\n\n**Signature of the Guide Prof. Amitha S K**\n\n**Assistant Professor, Dept. of AI & ML BMSIT&M**\n\n**Signature of the HOD**\n\n**Dr. Anupama Professor & HOD, Dept. of AI & ML**\n\n**BMSIT&M**\n\n# ABSTRACT",
+      "created_at": "2026-05-30T00:43:12.099410",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_e6dfaa49",
+      "document_title": "DBMS_Mini_Project_Report_260527_093017734"
+    },
+    {
+      "id": "057901f2",
+      "title": "DBMS_Mini_Project_Report_260527_093017734 - Part 3",
+      "content": "GlobalCart is a modern web-based e-commerce application architected to provide consumers with an intuitive, seamless, and protected digital marketplace environment. The system functions as a robust business-to-consumer vector enabling users to systematically browse complex product inventories, categorize dynamic merchandise options, manage highly volatile transactional carts, update active client records, and finalize secure checkout workflows through a unified, fluid client user interface.\n\nThe architectural layout emphasizes low runtime footprint, decoupled transactional tables, and modular structural views. The implementation models cross-platform performance metrics across essential modules, establishing clean structural layers for customer registrations, catalog indices, and multi-state cart counters. Built using scalable client-side frameworks and optimized database mapping tables, GlobalCart provides a complete blueprint demonstrating how distributed technologies can be customized to minimize transaction lifecycle blocks, mitigate relational layout redundancy, and drastically lower customer friction parameters across standard commercial network paths.\n\n# TABLE OF CONTENTS\n\n**CHAPTER / STRUCTURAL SECTION TITLE PAGE NO.**\n\n**Abstract** i\n\nList of Figures ii\n\nList of Tables iii",
+      "created_at": "2026-05-30T00:43:12.360535",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_e6dfaa49",
+      "document_title": "DBMS_Mini_Project_Report_260527_093017734"
+    },
+    {
+      "id": "5b155a91",
+      "title": "DBMS_Mini_Project_Report_260527_093017734 - Part 4",
+      "content": "1. [Introduction 1](#_TOC_250024)\n   1. [Overview 1](#_TOC_250023)\n   2. [Objectives 1](#_TOC_250022)\n   3. [System Features 1](#_TOC_250021)\n   4. [Project Scope 2](#_TOC_250020)\n2. [System Requirements and Specifications 3](#_TOC_250019)\n   1. [Hardware Requirements 3](#_TOC_250018)\n   2. [Software Requirements 3](#_TOC_250017)\n   3. [Functional Requirements 4](#_TOC_250016)\n   4. [Non-Functional Requirements 4](#_TOC_250015)\n3. System Design 5\n   1. [Entity-Relationship (ER) Diagram 5](#_TOC_250014)\n   2. [Relational Schema Diagram Map 6](#_TOC_250013)\n   3. [Normalization Analysis 6](#_TOC_250012)\n4. [Implementation 7](#_TOC_250011)\n   1. [Frontend Presentation Interface 7](#_TOC_250010)\n   2. [Backend Business Logic Orchestration 7](#_TOC_250009)\n   3. [Database Storage Optimization 8](#_TOC_250008)\n5. [Testing 9](#_TOC_250007)\n   1. [Testing Methods Matrix 9](#_TOC_250006)\n   2. [Formal Test Cases Verification 9](#_TOC_250005)\n\n**CHAPTER / STRUCTURAL SECTION TITLE PAGE NO.**\n\n* 1. [Result of Architectural Testing 9](#_TOC_250004)\n\n1. [Results and Discussion 10](#_TOC_250003)\n   1. [Operational Performance Results 10](#_TOC_250002)\n   2. [Strategic Future Architectural Enhancements 10](#_TOC_250001)\n\n[References 11](#_TOC_250000)\n\n# INTRODUCTION\n\n## Overview",
+      "created_at": "2026-05-30T00:43:12.619355",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_e6dfaa49",
+      "document_title": "DBMS_Mini_Project_Report_260527_093017734"
+    },
+    {
+      "id": "98574c5b",
+      "title": "DBMS_Mini_Project_Report_260527_093017734 - Part 5",
+      "content": "The swift integration of web-based technology vectors into contemporary supply chains has changed how consumers engage with retail frameworks. GlobalCart represents a modern online shopping environment engineered to echo the architectural principles governing large-scale enterprise e-commerce platforms such as Flipkart and Amazon. This digital portal enables authenticated client identities to interact with decoupled micro-inventories, browse structured relational product listings across granular operational departments, and purchase goods through a highly responsive interface.\n\n## Objectives\n\nThe design, deployment, and testing boundaries of the GlobalCart application fulfill the following explicit core engineering objectives:\n\n* + - To build and deploy a low-latency, resilient digital online shopping system engine.\n    - To minimize consumer lookup operations by optimizing catalog filtering and keyword search matching.\n    - To design a deterministic state workflow engine governing multi-item shopping carts and transaction checkouts.\n    - To enforce data isolation, encryption parameters, and structured storage schemas for confidential user credentials.\n    - To increase retail accessibility by establishing fluid UI configurations responsive across variable device forms.\n\n## System Features\n\nThe platform architecture delivers an end-to-end operational feature grid composed of:",
+      "created_at": "2026-05-30T00:43:12.910923",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_e6dfaa49",
+      "document_title": "DBMS_Mini_Project_Report_260527_093017734"
+    },
+    {
+      "id": "96f6e038",
+      "title": "DBMS_Mini_Project_Report_260527_093017734 - Part 6",
+      "content": "1. **User Registration and Login:** Governs tokenized customer entry boundaries, state handling, and secure profile mapping rules.\n2. **Product Listing and Categories:** Renders catalog matrix arrays dynamically tied to isolated system backend storage tables.\n3. **Search and Filter Options:** Executes parameter-driven indexing lookup queries matching custom strings against item headers.\n4. **Shopping Cart Management:** Processes transactional data arrays allowing reactive adjustments to item quantities.\n5. **Order Placement:** Bundles terminal cart states into localized order receipt datasets, mapping items to user records.\n6. **Responsive User Interface:** Applies fluid, adaptive design frameworks preventing element overlapping across display boundaries.\n\n## Project Scope\n\nThe immediate operating scope is configured tailored to local digital retail outlets and customer units demanding lightweight, cost-effective, self-hosted marketplace setups. The underlying platform engine is decoupled to simplify seamless third-party extensions. Future operational updates include automated payment clearance gateways, predictive deep-learning customer product recommenders, and comprehensive administrative telemetry reporting analytics modules.\n\n# SYSTEM REQUIREMENTS AND SPECIFICATIONS\n\n## Hardware Requirements",
+      "created_at": "2026-05-30T00:43:13.243575",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_e6dfaa49",
+      "document_title": "DBMS_Mini_Project_Report_260527_093017734"
+    },
+    {
+      "id": "baa6d777",
+      "title": "DBMS_Mini_Project_Report_260527_093017734 - Part 7",
+      "content": "To isolate the execution stack from host performance constraints and eliminate resource-contention compilation lags, the local development and testing environment utilizes the following baseline specifications:\n\n|  |  |\n| --- | --- |\n| **HARDWARE MODULE ELEMENT** | **MINIMUM OPERATIONAL METRIC REQUIREMENT** |\n| Central Processing Unit (CPU) | Intel Core i3 architectural processor or higher equivalent computing core |\n| System Physical Memory (RAM) | 4 Gigabytes (GB) absolute minimum allocated runtime hardware allocation |\n| Non-Volatile Disk Space | 20 Gigabytes (GB) unallocated storage sectors for code repositories and packages |\n\n## Software Requirements\n\nThe software orchestration layer relies on specific compilers, runtimes, and drivers to maintain uniform application state configurations:\n\n|  |  |\n| --- | --- |\n| **SOFTWARE SUB-SYSTEM** | **PLATFORM TOOLING SPECIFICATION DETAILS** |\n| Operating System Environment | Microsoft Windows 10/11 x64 or modern Linux/POSIX-compliant distributions (Ubuntu/MacOS) |\n| Frontend Interface Engine | W3C Standard Semantic HTML5, CSS3, ES6 JavaScript Layouts / React Core Libraries |\n| Backend Execution Runtime | Node.js asynchronous engine / Express.js structured routing gateway controller |\n| Data Persistence Layer | MongoDB Non-Relational Cluster / Document Mapping System or Firebase Core Realtime Engine |\n| Client Web Browser | Google Chrome Engine, Microsoft Edge v110+, or Mozilla Firefox Quantum Layers |\n\n## Functional Requirements",
+      "created_at": "2026-05-30T00:43:13.513806",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_e6dfaa49",
+      "document_title": "DBMS_Mini_Project_Report_260527_093017734"
+    },
+    {
+      "id": "8a4c81a9",
+      "title": "DBMS_Mini_Project_Report_260527_093017734 - Part 8",
+      "content": "The functional core specifies the mandatory computational services that the platform must execute securely:\n\n* + - **User Authentication:** Cryptographic processing of secure client registration inputs, credential evaluations, and state lookups.\n    - **Product Inventory Management:** Handling backend structural operations to modify or fetch details in the item table.\n    - **Cart Operations Matrix:** Tracking additions, quantity scaling updates, calculations, and clear states.\n    - **Order Fulfillment Execution:** Combining snapshot states of active checkouts into persistent database invoices.\n    - **Query Match Search:** Parsing unstructured search parameters into clean text indexes across active inventories.\n\n## Non-Functional Requirements\n\nNon-functional benchmarks establish the qualitative boundaries, safety measures, and operational constraints of the execution engine:",
+      "created_at": "2026-05-30T00:43:13.781019",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_e6dfaa49",
+      "document_title": "DBMS_Mini_Project_Report_260527_093017734"
+    },
+    {
+      "id": "8668f2a3",
+      "title": "DBMS_Mini_Project_Report_260527_093017734 - Part 9",
+      "content": "1. **Security:** Enforcing strict separation of data storage layers and applying sanitization mechanics on fields to prevent malicious payload parsing injections.\n2. **Scalability:** Supporting incremental request traffic spikes through stateless routing handles.\n3. **Reliability:** Enforcing atomic transactions where database operations complete fully or rollback to preserve records safely.\n4. **Performance:** Maintaining interactive search response benchmarks under standard query loads.\n5. **User-Friendly Interface:** Guaranteeing a crisp layout completely free of visual text collisions or overlapping elements.\n\n# SYSTEM ARCHITECTURE & DESIGN\n\n## Entity-Relationship (ER) Diagram\n\nThe structural constraints governing our marketplace infrastructure are mapped out using distinct logical entity sets. The conceptual data design defines the attributes, identities, and structural mappings that anchor our storage tables.\n\nThe core entity relationships are defined as follows:",
+      "created_at": "2026-05-30T00:43:14.049235",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_e6dfaa49",
+      "document_title": "DBMS_Mini_Project_Report_260527_093017734"
+    },
+    {
+      "id": "6848371e",
+      "title": "DBMS_Mini_Project_Report_260527_093017734 - Part 10",
+      "content": "* + - **User Entity:** Captures specific unique client vectors. A user can place multiple orders over time (establishing a 1-to-Many cardinality mapping block).\n    - **Product Entity:** Forms the core inventory system array. Individual items map to cart collection models.\n    - **Cart Entity:** Acts as a temporary memory collector. A cart contains multiple products, updating quantity modifiers dynamically.\n    - **Order Entity:** Retains finalized checkout invoice records. Each discrete order belongs exclusively to one specific user entity.\n    - **Payment Entity:** Encapsulates transaction state tokens tied directly to independent orders.\n\n**[USER] ----- (1) : (N) ----- [ORDER] ----- (1) : (1) -----[PAYMENT]**\n\n**| (1)**\n\n**| (1)**\n\n**[CART] ----- (N) : (1)** **[PRODUCT]**\n\n**Figure 3.1: ER Diagram Mapping Entity Cardinalities**\n\n## Relational Schema Diagram Map\n\nTo transition from conceptual objects to operational database tables, the fields are normalized into precise schemas. Primary keys (PK) ensure global row integrity, while foreign keys (*FK*) enforce data links across entities.\n\n### User Table Schema",
+      "created_at": "2026-05-30T00:43:14.350559",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_e6dfaa49",
+      "document_title": "DBMS_Mini_Project_Report_260527_093017734"
+    },
+    {
+      "id": "fb775897",
+      "title": "DBMS_Mini_Project_Report_260527_093017734 - Part 11",
+      "content": "|  |  |  |\n| --- | --- | --- |\n| **FIELD NAME (ATTRIBUTE)** | **DATA ARCHITECTURE TYPE** | **STRUCTURAL MAPPING RULES** |\n| user\\_id | Integer | Primary Key - Unique User Identification Token |\n| name | Varchar(100) | Standard Alphabetic Name String |\n| email | Varchar(150) | Unique Customer Email Identifier |\n| password | Varchar(256) | Secure Cryptographic Passphrase Representation |\n\n### Product Table Schema\n\n|  |  |  |\n| --- | --- | --- |\n| **FIELD NAME (ATTRIBUTE)** | **DATA ARCHITECTURE TYPE** | **STRUCTURAL MAPPING RULES** |\n| product\\_id | Integer | Primary Key - Unique Catalog Stock Identifier |\n| product\\_name | Varchar(200) | Commercial Nomenclature Label Title |\n| price | Float | Precision Numeric Monetary Cost Value |\n| category | Varchar(100) | Classification Index Field |\n\n### Cart Table Schema\n\n|  |  |  |\n| --- | --- | --- |\n| **FIELD NAME (ATTRIBUTE)** | **DATA ARCHITECTURE TYPE** | **STRUCTURAL MAPPING RULES** |\n| cart\\_id | Integer | Primary Key - Allocation Identifier |\n| *user\\_id* | Integer | Foreign Key referencing User Table |\n| *product\\_id* | Integer | Foreign Key referencing Product Table |\n| quantity | Integer | Item Multiplier Counter (Value ≥ 1) |\n\n### Order Table Schema",
+      "created_at": "2026-05-30T00:43:14.627431",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_e6dfaa49",
+      "document_title": "DBMS_Mini_Project_Report_260527_093017734"
+    },
+    {
+      "id": "23090520",
+      "title": "DBMS_Mini_Project_Report_260527_093017734 - Part 12",
+      "content": "|  |  |  |\n| --- | --- | --- |\n| **FIELD NAME (ATTRIBUTE)** | **DATA ARCHITECTURE TYPE** | **STRUCTURAL MAPPING RULES** |\n| order\\_id | Integer | Primary Key - Terminal Transaction Record Code |\n| *user\\_id* | Integer | Foreign Key referencing User Table |\n| total\\_amount | Float | Aggregated Purchase Invoice Valuation |\n| order\\_date | Date/Timestamp | System Log Timestamp Block |\n\n## Normalization Analysis\n\nThe structural layout of the database is rigorously evaluated using normalization principles to minimize redundancy and prevent anomalies during insert, update, or delete operations.\n\nThe layout satisfies \\*\\*First Normal Form (1NF)\\*\\* as all cell values are strictly atomic, and repeating nested attributes are completely eliminated. It satisfies \\*\\*Second Normal Form (2NF)\\*\\* because all non-prime structural fields depend entirely on the composite primary\n\nidentifier fields, removing partial functional dependencies. Finally, \\*\\*Third Normal Form (3NF)\\*\\* compliance is verified as there are no transitive dependencies present across tables; every non-key attribute relies solely on the primary key, ensuring clean data storage across execution lifecycles.\n\n# IMPLEMENTATION\n\n## Frontend Presentation Interface",
+      "created_at": "2026-05-30T00:43:14.918455",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_e6dfaa49",
+      "document_title": "DBMS_Mini_Project_Report_260527_093017734"
+    },
+    {
+      "id": "0d7036f4",
+      "title": "DBMS_Mini_Project_Report_260527_093017734 - Part 13",
+      "content": "The user-facing system interface is structured as an interactive web app using modern view engines. The component lifecycle uses state variables to track inputs, cart changes, and catalog filtering in real time. This modular approach eliminates complete page refetches, ensuring high-speed client interactions.\n\nThe application interface maps workflows across five functional layout components:\n\n1. **Home Page View:** Serves as the primary entry interface, showcasing dynamic carousels, broad category matrices, and marketing highlights.\n2. **Product Catalog Page:** Coordinates active filtering sliders and keyword lookup bars to parse inventories smoothly.\n3. **Cart Evaluation Page:** Renders multi-item rows, enabling users to adjust quantities with instant pricing feedback.\n4. **Login/Register Portal:** Features strict client-side validation rules to filter out malformed inputs.\n5. **Checkout Interface:** Summarizes purchase items and guides users through order validation steps.\n\n## Backend Business Logic Orchestration\n\nThe backend engine functions as an asynchronous API routing bridge. Built upon light networking frameworks, it handles HTTP request actions, reads JSON payloads, maps routes safely, and acts as an authentication gatekeeper.",
+      "created_at": "2026-05-30T00:43:15.226569",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_e6dfaa49",
+      "document_title": "DBMS_Mini_Project_Report_260527_093017734"
+    },
+    {
+      "id": "138c5e3d",
+      "title": "DBMS_Mini_Project_Report_260527_093017734 - Part 14",
+      "content": "Authentication routines securely process user credentials by separating login profiles from common assets. By processing incoming data streams asynchronously, the system prevents thread blocking under concurrent load spikes. This ensures that long checkout calculations never interfere with basic search and browse actions.\n\n## Database Storage Optimization\n\nThe data layer handles persistent records by converting application inputs into structured storage entries. The system maps customer keys, stock catalogs, shopping state arrays, and purchase invoice data fields into decoupled document tables.\n\nBy isolating index trackers, lookup speeds remain optimized as data volumes scale. Index paths are configured around frequently hit paths, such as searching by product categories or checking order history. This optimization shortens processing time, maintaining smooth read-write performance even during peak request cycles.\n\n# TESTING\n\n## Testing Methods Matrix\n\nTo verify that the application operates reliably and matches all requirements without errors, the project was evaluated using a rigorous testing matrix:",
+      "created_at": "2026-05-30T00:43:15.517039",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_e6dfaa49",
+      "document_title": "DBMS_Mini_Project_Report_260527_093017734"
+    },
+    {
+      "id": "3111f06b",
+      "title": "DBMS_Mini_Project_Report_260527_093017734 - Part 15",
+      "content": "* + - **Unit Testing:** Confirms that specific internal code blocks, validation filters, and mathematical arithmetic calculators produce accurate results across data boundaries.\n    - **Integration Testing:** Verifies that data transfers smoothly between frontend components, API routing layers, and the backend database cluster.\n    - **System Testing:** Checks the complete application end-to-end to confirm that complex workflows, such as user checkouts, execute properly from start to finish.\n    - **User Interface Testing:** Validates visual elements across variable viewport sizes to confirm that layouts adapt fluidly without element overlaps or broken styling hooks.\n\n## Formal Test Cases Verification\n\nThe essential operational pathways of the system were executed against defined test cases, as summarized in the verification table below:",
+      "created_at": "2026-05-30T00:43:15.774337",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_e6dfaa49",
+      "document_title": "DBMS_Mini_Project_Report_260527_093017734"
+    },
+    {
+      "id": "f7fb52b7",
+      "title": "DBMS_Mini_Project_Report_260527_093017734 - Part 16",
+      "content": "|  |  |  |\n| --- | --- | --- |\n| **TEST IDENTIFIER LABEL** | **FUNCTIONAL PATHWAY DESCRIPTION** | **EXPECTED OPERATIONAL OUTCOME** |\n| TC-AUTH-01 | User enters valid credential fields inside the Login Form component. | Successful client authentication and session state token generation. |\n| TC-CART-02 | User selects specific item and triggers the \"Add to Cart\" action handler. | Product identifier maps to active user cart array and increments counters. |\n| TC-CHKT-03 | User clicks the checkout trigger with valid cart items active. | Order is placed  successfully; invoices write to database, and cart clears safely. |\n| TC-SRCH-04 | User passes a string parameter into the global search bar input. | Filters database items, displaying only relevant product cards. |\n\n## Result of Architectural Testing\n\nThe GlobalCart platform passed all functional verification rounds successfully. The system performed reliably under major simulated test conditions, processing concurrent API calls cleanly and maintaining proper UI alignment across all target platforms.\n\n# RESULTS AND DISCUSSION\n\n## Operational Performance Results\n\nThe GlobalCart application met all functional specs and performance benchmarks during production evaluations. The system establishes a lightweight, responsive e-commerce architecture that performs smoothly under standard operational loads.\n\nKey functional outcomes validated across the deployment lifecycles include:",
+      "created_at": "2026-05-30T00:43:16.070717",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_e6dfaa49",
+      "document_title": "DBMS_Mini_Project_Report_260527_093017734"
+    },
+    {
+      "id": "39674ba6",
+      "title": "DBMS_Mini_Project_Report_260527_093017734 - Part 17",
+      "content": "* + - Smooth, stutter-free product browsing using reactive frontend rendering.\n    - Accurate, real-time recalculations within the shopping cart array when item attributes scale.\n    - Secure, isolated client registration and profile verification.\n    - Deterministic order placement, guaranteeing accurate row writes to the database.\n\n## Strategic Future Architectural Enhancements\n\nWhile the core system successfully meets the requirements for academic submission, the system design is built to support scale-up enhancements in future deployment phases.\n\nFirst, the transaction workflow will be upgraded by integrating live tokenized online payment processing gateways. Second, the search catalog can be enhanced with an AI-driven product recommendation module that analyses user data to surface relevant suggestions. Finally, the administrative backend will be expanded to include an interactive tracking analytics dashboard alongside comprehensive automated inventory management systems.\n\n# REFERENCES\n\n1. Elmasri, R. and Navathe, S.B., 2017. *Fundamentals of Database Systems*. 7th ed. Pearson Education.\n2. Silberschatz, A., Korth, H.F. and Sudarshan, S., 2020. *Database System Concepts*. 7th ed. McGraw-Hill Education.\n3. Flanagan, D., 2020. *JavaScript: The Definitive Guide*. 7th ed. O'Reilly Media, Inc.\n4. React Architecture Documentation Project, 2025. *State Management Hook Lifecycles Reference Guide*. Meta Open Source.",
+      "created_at": "2026-05-30T00:43:16.334645",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_e6dfaa49",
+      "document_title": "DBMS_Mini_Project_Report_260527_093017734"
+    },
+    {
+      "id": "28c4368b",
+      "title": "ada61",
+      "content": "| 6   | 7   |     | 8   | 10  |\n| --- | --- | --- | --- | --- |\n#include <stdio.h> #include <stdio.h> #include <stdio.h> #include <stdio.h>\n#include <limits.h> #define MAX 100 int max(int a,int b){ int b[8][8]={0}, n=8;\n#define MAX 100 int a[MAX][MAX], vis[MAX], order[MAX];     return (a>b)?a:b; int safe(int r,int c){\n| #define INF INT_MAX | int n, idx; |     | }   |     for(int i=0;i<c;i++) |\n| ------------------- | ----------- | --- | --- | ------------------------ |\nint g[MAX][MAX], dist[MAX], vis[MAX], n; void dfs(int v){ int main(){         if(b[r][i]) return 0;\nvoid dijkstra(int s){     vis[v]=1;     int n,W;     for(int i=r,j=c;i>=0&&j>=0;i--,j--)\n    for(int i=0;i<n;i++)     for(int i=0;i<n;i++)     printf(\"Enter number of items: \");         if(b[i][j]) return 0;\n        dist[i]=INF, vis[i]=0;         if(a[v][i] && !vis[i])     scanf(\"%d\",&n);     for(int i=r,j=c;i<n&&j>=0;i++,j--)\n    dist[s]=0;             dfs(i);     int wt[n],val[n];         if(b[i][j]) return 0;\n    for(int i=0;i<n-1;i++){     order[--idx]=v;     printf(\"Enter weight and value:\\n\");     return 1;\n|         int min=INF, u=-1; | }   |     |     for(int i=0;i<n;i++) | }   |\n| -------------------------- | --- | --- | ------------------------ | --- |\n        for(int j=0;j<n;j++) void topo(){         scanf(\"%d%d\",&wt[i],&val[i]); int solve(int c){\n            if(!vis[j] && dist[j]<min)     idx=n;     printf(\"Enter capacity: \");     if(c==n) return 1;\n                min=dist[j], u=j;     for(int i=0;i<n;i++)     scanf(\"%d\",&W);     for(int r=0;r<n;r++){\n        if(u==-1) break;         vis[i]=0;     int dp[n+1][W+1];         if(safe(r,c)){\n        vis[u]=1;     for(int i=0;i<n;i++)     for(int i=0;i<=n;i++){             b[r][c]=1;\n        for(int v=0;v<n;v++)         if(!vis[i])         for(int j=0;j<=W;j++){             if(solve(c+1))\n            if(!vis[v] && g[u][v] &&             dfs(i);             if(i==0 || j==0)                 return 1;\n               dist[u]!=INF && }                 dp[i][j]=0;             b[r][c]=0;\n               dist[u]+g[u][v] < dist[v]) int main(){             else if(wt[i-1]<=j)         }\n                dist[v]=dist[u]+g[u][v];     printf(\"Enter number of vertices: \");                 dp[i][j]=max(     }\n    }     scanf(\"%d\",&n);                 val[i-1]+dp[i-1][j-wt[i-1]],     return 0;\n}     printf(\"Enter adjacency matrix:\\n\");                 dp[i-1][j]); }\nint main(){     for(int i=0;i<n;i++)             else int main(){\n    int e,s,u,v,w;         for(int j=0;j<n;j++)                 dp[i][j]=dp[i-1][j];     solve(0);\n    printf(\"Enter vertices and edges: \");             scanf(\"%d\",&a[i][j]);         }     for(int i=0;i<n;i++){\n    scanf(\"%d%d\",&n,&e);     topo();     }         for(int j=0;j<n;j++)\n    printf(\"Enter edges (u v w):\\n\");     printf(\"Topological order:\\n\");     printf(\"Maximum value = %d\",dp[n][W]);             printf(\"%c \", b[i][j]?'Q':'.');\n    for(int i=0;i<e;i++){     for(int i=0;i<n;i++)     return 0;         printf(\"\\n\");\n        scanf(\"%d%d%d\",&u,&v,&w);         printf(\"%d \",order[i]); }     }\n|         g[u][v]=g[v][u]=w; |     return 0; |     |     | }   |\n| -------------------------- | ------------- | --- | --- | --- |\n|     }                      | }             |     |     |     |\n    printf(\"Enter source: \");\n    scanf(\"%d\",&s);\n    dijkstra(s);\n    printf(\"\\nShortest distances:\\n\");\no3#215. Kth Largest Element in an Array\n    for(int i=0;i<n;i++)\n|         printf(\"%d -> %d\\n\",i,dist[i]); |     | #include<stdio.h>         |     |                           |\n| --------------------------------------- | --- | ------------------------- | --- | ------------------------- |\n|     return 0;                           |     | void swap(int *a,int *b){ |     |                           |\n|                                         |     |     int t=*a;             |     | o2#278. First Bad Version |\n}\n|     |     |     *a=*b;                     |     | #include<stdio.h>           |\n| --- | --- | ------------------------------ | --- | --------------------------- |\n|     |     |     *b=t;                      |     | int bad=4;                  |\n|     |     | }                              |     | int isBadVersion(int x){    |\n|     |     | int part(int a[],int l,int r){ |     |     return x>=bad;          |\n|     |     |     int p=a[r],i=l;            |     | }                           |\n|     |     |     for(int j=l;j<r;j++)       |     | int firstBadVersion(int n){ |\no5#122. Best Time to Buy and Sell Stock II         if(a[j]>p)     int l=1,r=n;\n#include<stdio.h>\n|     |     |             swap(&a[i++],&a[j]); |     |     while(l<r){ |\n| --- | --- | -------------------------------- | --- | --------------- |\nint maxProfit(int a[],int n){\n|     int p=0; |     |     swap(&a[i],&a[r]); |     |         int m=l+(r-l)/2;    |\n| ------------ | --- | ---------------------- | --- | --------------------------- |\n|              |     |     return i;          |     |         if(isBadVersion(m)) |\n    for(int i=1;i<n;i++)\n|     |     | }   |     |             r=m; |\n| --- | --- | --- | --- | ---------------- |\n        if(a[i]>a[i-1]) int kth(int a[],int n,int k){         else\n            p+=a[i]-a[i-1];\n|     |     |     int l=0,r=n-1; |     |             l=m+1; |\n| --- | --- | ------------------ | --- | ------------------ |\n    return p;\n| }   |     |     while(1){              |     |     }         |\n| --- | --- | -------------------------- | --- | ------------- |\n|     |     |         int p=part(a,l,r); |     |     return l; |\nint main(){\n|     |     |         if(p==k-1) return a[p]; |     | }   |\n| --- | --- | ------------------------------- | --- | --- |\n    int a[]={7,1,5,3,6,4};         else if(p>k-1) r=p-1; int main(){\n    printf(\"%d\",maxProfit(a,6));\n|     |     |         else l=p+1; |     |     printf(\"%d\",firstBadVersion(5)); |\n| --- | --- | ------------------- | --- | ------------------------------------ |\n    return 0;\n| }   |     |     } |     |     return 0; |\n| --- | --- | ----- | --- | ------------- |\n|     |     | }     |     | }             |\nint main(){\n    int a[]={3,2,1,5,6,4};\n    printf(\"%d\",kth(a,6,2));\n    return 0;\n}\n9\n#include <stdio.h>\nint f = 0;\nvoid subset(int a[], int n, int d, int s[], int k, int sum) { o4#455. Assign Cookies\n|     if(sum == d) {    |     |     |     | #include<stdio.h>  |\n| --------------------- | --- | --- | --- | ------------------ |\n|         printf(\"{ \"); |     |     |     | #include<stdlib.h> |\n        for(int i=0;i<k;i++) o1#35. Search Insert Position int cmp(const void*a,const void*b){\n            printf(\"%d \", s[i]); i#include<stdio.h>     return *(int*)a-*(int*)b;\n        printf(\"}\\n\"); int searchInsert(int* nums,int n,int target){ }\n        f = 1;     int l=0,r=n-1; int content(int g[],int gs,int s[],int ss){\n        return;     while(l<=r){     qsort(g,gs,sizeof(int),cmp);\n    }         int m=(l+r)/2;     qsort(s,ss,sizeof(int),cmp);\n    if(sum > d || n == 0) return;         if(nums[m]==target) return m;     int i=0,j=0;\n    s[k] = a[0];         else if(nums[m]<target) l=m+1;     while(i<gs && j<ss){\n    subset(a+1, n-1, d, s, k+1, sum+a[0]); // include         else r=m-1;         if(s[j]>=g[i]) i++;\n    subset(a+1, n-1, d, s, k, sum);         // exclude     }         j++;\n| }                                 |     |     return l;             |     |     }         |\n| --------------------------------- | --- | ------------------------- | --- | ------------- |\n| int main() {                      |     | }                         |     |     return i; |\n|     int a[] = {1,2,5,6,8}, d = 9; |     | int main(){               |     | }             |\n|     int s[5];                     |     |     int nums[]={1,3,5,6}; |     | int main(){   |\n    subset(a, 5, d, s, 0, 0);     int target=5;     int g[]={1,2,3};\n    if(!f)     int n=sizeof(nums)/sizeof(nums[0]);     int s[]={1,1};\n        printf(\"No subset found\");     printf(\"%d\",searchInsert(nums,n,target));     printf(\"%d\",content(g,3,s,2));\n|     return 0; |     |     return 0; |     |     return 0; |\n| ------------- | --- | ------------- | --- | ------------- |\n| }             |     | }             |     | }             |",
+      "created_at": "2026-05-30T00:43:33.414564",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_cec6d947",
+      "document_title": "ada61"
+    },
+    {
+      "id": "c5a211cc",
+      "title": "DBMS_Experiments_Codes - Part 1",
+      "content": "Content from the zip file `C:\\Users\\AADI\\AppData\\Local\\Temp\\tmpnps5v8wi.zip`:\n\n## File: Experiment1.txt\n\nCREATE USER 'bmsit'@'localhost' IDENTIFIED BY 'bmsit';\n\nGRANT ALL PRIVILEGES ON *.* TO 'bmsit'@'localhost';\n\nSELECT USER FROM mysql.user;\n\nCREATE TABLE EMPLOYEE1 (\n    EMPNO INT,\n    ENAME VARCHAR(255),\n    JOB VARCHAR(255),\n    MANAGER_NO INT,\n    SAL DECIMAL(10,2),\n    COMMISSION DECIMAL(10,2)\n);\n\nDESC EMPLOYEE1;\n\nINSERT INTO EMPLOYEE1 (EMPNO, ENAME, JOB, MANAGER_NO, SAL, COMMISSION)\nVALUES\n(1, 'John Doe', 'Manager', NULL, 5000, 1000),\n(2, 'Jane Smith', 'Developer', 1, 4000, 500),\n(3, 'Alice Johnson', 'Analyst', 1, 4500, NULL);\n\nSELECT * FROM EMPLOYEE1;\n\nINSERT INTO EMPLOYEE1 (EMPNO, ENAME, JOB, MANAGER_NO, SAL, COMMISSION)\nVALUES (4, 'manju', 'Dean', NULL, 50000, 1000);\n\nROLLBACK;\n\nSELECT * FROM EMPLOYEE1;\n\nALTER TABLE EMPLOYEE1\nADD CONSTRAINT PK_Employee_EMPNO PRIMARY KEY (EMPNO),\nMODIFY ENAME VARCHAR(255) NOT NULL,\nMODIFY JOB VARCHAR(255) NOT NULL,\nMODIFY SAL DECIMAL(10,2) NOT NULL;\n\nDESC EMPLOYEE1;\n\nINSERT INTO EMPLOYEE1 (EMPNO, ENAME, JOB, MANAGER_NO, SAL, COMMISSION)\nVALUES (4, NULL, NULL, NULL, NULL, NULL);\n\n## File: Experiment2.txt\n\nCREATE TABLE EMPLOYEE2 (\n    EMPNO INT PRIMARY KEY,\n    ENAME VARCHAR(255),\n    JOB VARCHAR(255),\n    MGR INT,\n    SAL DECIMAL(10,2)\n);\n\nALTER TABLE EMPLOYEE2\nADD COLUMN COMMISSION DECIMAL(10,2);",
+      "created_at": "2026-05-30T00:44:43.461891",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_473edf64",
+      "document_title": "DBMS_Experiments_Codes"
+    },
+    {
+      "id": "cd82090c",
+      "title": "DBMS_Experiments_Codes - Part 2",
+      "content": "INSERT INTO EMPLOYEE2 (EMPNO, ENAME, JOB, MGR, SAL, COMMISSION)\nVALUES\n(101, 'John Doe', 'Manager', NULL, 5000, 1000),\n(102, 'Jane Smith', 'Developer', 101, 4000, 500),\n(103, 'Alice Johnson', 'Analyst', 101, 4500, NULL),\n(104, 'Bob White', 'Designer', 101, 4200, 600),\n(105, 'Eva Brown', 'Tester', 102, 3800, 700);\n\nSELECT * FROM EMPLOYEE2;\n\nUPDATE EMPLOYEE2\nSET JOB = 'Senior Developer'\nWHERE EMPNO = 102;\n\nSELECT * FROM EMPLOYEE2;\n\nALTER TABLE EMPLOYEE2\nCHANGE COLUMN JOB POSITION VARCHAR(255);\n\nALTER TABLE EMPLOYEE2\nRENAME COLUMN POSITION TO DESIGN;\n\nDESC EMPLOYEE2;\n\nDELETE FROM EMPLOYEE2\nWHERE EMPNO = 105;\n\nSELECT * FROM EMPLOYEE2;\n\nRENAME TABLE EMPLOYEE2 TO STAFF2;\n\nDESC STAFF2;\n\nALTER TABLE STAFF2\nDROP COLUMN MGR;\n\nDESC STAFF2;\n\n## File: Experiment3.txt\n\nCREATE TABLE EMPLOYEE3 (\n    E_ID INT PRIMARY KEY,\n    E_NAME VARCHAR(255),\n    AGE INT,\n    SALARY DECIMAL(10,2)\n);\n\nINSERT INTO EMPLOYEE3 (E_ID, E_NAME, AGE, SALARY)\nVALUES\n(1, 'JOHN DOE', 30, 50000.00),\n(2, 'JANE SMITH', 35, 60000.00),\n(3, 'ALICE JOHNSON', 28, 45000.00),\n(4, 'BOB WHITE', 40, 70000.00),\n(5, 'EVA BROWN', 33, 55000.00);\n\nSELECT * FROM EMPLOYEE3;\n\nSELECT COUNT(E_NAME) AS NUMEMPLOYEES\nFROM EMPLOYEE3;\n\nSELECT MAX(AGE) AS MAXAGE\nFROM EMPLOYEE3;\n\nSELECT MIN(AGE) AS MINAGE\nFROM EMPLOYEE3;\n\nSELECT SALARY\nFROM EMPLOYEE3\nORDER BY SALARY ASC;\n\nSELECT SALARY\nFROM EMPLOYEE3\nORDER BY SALARY DESC;\n\nSELECT SALARY, COUNT(*) AS NUMEMPLOYEES\nFROM EMPLOYEE3\nGROUP BY SALARY;\n\n## File: Experiment4.txt",
+      "created_at": "2026-05-30T00:44:43.713348",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_473edf64",
+      "document_title": "DBMS_Experiments_Codes"
+    },
+    {
+      "id": "b31a5457",
+      "title": "DBMS_Experiments_Codes - Part 3",
+      "content": "CREATE TABLE CUSTOMERS (\n    ID INT PRIMARY KEY,\n    NAME VARCHAR(50),\n    AGE INT,\n    ADDRESS VARCHAR(255),\n    SALARY DECIMAL(10,2)\n);\n\nINSERT INTO CUSTOMERS (ID, NAME, AGE, ADDRESS, SALARY)\nVALUES\n(1, 'John Doe', 30, '123 Main Street, Anytown, USA', 50000.00),\n(2, 'Jane Smith', 25, '456 Elm Street, Otherville, USA', 60000.00),\n(3, 'Alice Johnson', 35, '789 Oak Street, Springfield, USA', 70000.00),\n(4, 'Bob Brown', 40, '101 Pine Street, Greenvale, USA', 80000.00),\n(5, 'Emily Davis', 28, '222 Maple Street, Riverdale, USA', 55000.00);\n\nCREATE TABLE salary_change_log (\n    log_id INT AUTO_INCREMENT PRIMARY KEY,\n    message TEXT,\n    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n\nDELIMITER $$\n\nCREATE TRIGGER salary_change_trigger\nBEFORE INSERT ON CUSTOMERS\nFOR EACH ROW\nBEGIN\n    INSERT INTO salary_change_log (message)\n    VALUES (CONCAT('New salary: ', NEW.SALARY));\nEND$$\n\nCREATE TRIGGER salary_change_trigger_update\nBEFORE UPDATE ON CUSTOMERS\nFOR EACH ROW\nBEGIN\n    DECLARE old_salary DECIMAL(10,2);\n    DECLARE new_salary DECIMAL(10,2);\n\n    SET old_salary = (SELECT SALARY FROM CUSTOMERS WHERE ID = OLD.ID);\n    SET new_salary = NEW.SALARY;\n\n    INSERT INTO salary_change_log (message)\n    VALUES (\n        CONCAT(\n            'Old salary: ', old_salary, '\\n',\n            'New salary: ', new_salary, '\\n',\n            'Salary difference: ', new_salary - old_salary\n        )\n    );\nEND$$",
+      "created_at": "2026-05-30T00:44:43.996098",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_473edf64",
+      "document_title": "DBMS_Experiments_Codes"
+    },
+    {
+      "id": "7d4dbad3",
+      "title": "DBMS_Experiments_Codes - Part 4",
+      "content": "CREATE TRIGGER salary_change_trigger_delete\nBEFORE DELETE ON CUSTOMERS\nFOR EACH ROW\nBEGIN\n    INSERT INTO salary_change_log (message)\n    VALUES (CONCAT('Salary being deleted: ', OLD.SALARY));\nEND$$\n\nDELIMITER ;\n\nSELECT * FROM salary_change_log;\n\n## File: Experiment5.txt\n\nDELIMITER //\n\nCREATE PROCEDURE extract_employee_data()\nBEGIN\n    DECLARE emp_id INT;\n    DECLARE emp_name VARCHAR(255);\n    DECLARE emp_age INT;\n    DECLARE emp_salary DECIMAL(10,2);\n\n    DECLARE emp_cursor CURSOR FOR\n    SELECT E_id, E_name, Age, Salary FROM Employee3;\n\n    OPEN emp_cursor;\n\n    FETCH emp_cursor INTO emp_id, emp_name, emp_age, emp_salary;\n\n    WHILE (emp_id IS NOT NULL) DO\n\n        SELECT CONCAT(\n            'Employee ID: ', emp_id,\n            ', Employee Name: ', emp_name,\n            ', Age: ', emp_age,\n            ', Salary: ', emp_salary\n        ) AS Employee_Data;\n\n        FETCH emp_cursor INTO emp_id, emp_name, emp_age, emp_salary;\n\n    END WHILE;\n\n    CLOSE emp_cursor;\n\nEND//\n\nDELIMITER ;\n\nCALL extract_employee_data();",
+      "created_at": "2026-05-30T00:44:44.269158",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_473edf64",
+      "document_title": "DBMS_Experiments_Codes"
+    },
+    {
+      "id": "16dc3cee",
+      "title": "trip_expense_splitter_named - Part 1",
+      "content": "## Trip Expense Splitter\n| Item | Paid By | Amount | People Sharing | Aaditya | Sonu | Aayush | Alok | Prince | Rabindra | Riyaj | Suyash | Yuvraj | Split Per Person | Unnamed: 14 | Person | Total Share |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | Aaditya | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | Sonu | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | Aayush | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | Alok | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | Prince | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | Rabindra | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | Riyaj | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | Suyash | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | Yuvraj | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | Auto-calculated totals | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |\n| TOTAL | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN | NaN |",
+      "created_at": "2026-05-30T00:44:53.870560",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_ef57d29d",
+      "document_title": "trip_expense_splitter_named"
+    },
+    {
+      "id": "7d430938",
+      "title": "trip_expense_splitter_named - Part 2",
+      "content": "## Instructions\n| How to Use |\n| --- |\n| NaN |\n| 1. Enter item name in 'Item' column. |\n| 2. Enter who paid in 'Paid By' column. |\n| 3. Enter amount in 'Amount' column. |\n| 4. Mark 'Yes' for people sharing the expense. |\n| 5. 'People Sharing' and 'Split Per Person' are calculated automatically. |\n| 6. Add actual names in row 1 if needed. |\n\n## Paid Summary\n| Person | Individual Payments | Total Paid | Unnamed: 3 | Unnamed: 4 |\n| --- | --- | --- | --- | --- |\n| Yubraj | 755,1500,40,60,100 | NaN | NaN | Instructions |\n| Adi | 600,100,105,25,1036,90,100,250 | NaN | NaN | Enter multiple payments separated by commas. |\n| Riyaj | 90,1000,600,100 | NaN | NaN | Example: 100,250,300 |\n| Prince | 1395,200,100 | NaN | NaN | Total Paid updates automatically. |\n| Suyash | 4720 | NaN | NaN | NaN |\n| Ayush | 3000 | NaN | NaN | NaN |\n| Rabindra | 1000 | NaN | NaN | NaN |\n| NaN | NaN | NaN | NaN | NaN |\n| Grand Total | NaN | NaN | NaN | NaN |",
+      "created_at": "2026-05-30T00:44:54.157292",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_ef57d29d",
+      "document_title": "trip_expense_splitter_named"
+    },
+    {
+      "id": "755a092d",
+      "title": "kand2 - Part 1",
+      "content": "KBKKK107/207\nUSN 1 B Y\nBMS\nINSTITUTE OF TECHNOLOGY AND MANAGEMENT\n(An Autonomous Institute affiliated to Visvesvaraya Technological University,Belagavi)\nSEMESTER END EXAMINATION QUESTION PAPER\nFirst Semester BE Degree Examination\nRegular / Make-up / Arrears / Supplementary\nBALAKE KANNADA\nTime: 1 hr.Max. Marks: 50\nNote: 1. Answer all FIFTY full questions, choosing ONE Correct option.\n2. The correct option is to be shaded in the provide OMR sheet only.\n3. There is no Negative Marking.\n4. Shading more than 1 option, will lead to rejection of the particular question for scoring.",
+      "created_at": "2026-05-30T00:45:14.878105",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_9b6307b4",
+      "document_title": "kand2"
+    },
+    {
+      "id": "1b294db8",
+      "title": "kand2 - Part 2",
+      "content": "| Q. No | Multiple Choice Questions | Marks | CO, RBT |\n| ----- | ------------------------- | ----- | ------- |\nTranslate English word to Kannada\nColour: __________________\n| 01  |     | 01  | CO1, K2 |\n| --- | --- | --- | ------- |\nA) Anna                 B) Balapa             C) Banna                    D)\nBottle\nFestival: __________________\n| 02  |     | 01  | CO1, K2 |\n| --- | --- | --- | ------- |\nA) Nataka              B) Habba              C) Kathe                     D)\nRatri\nCloth: __________________\n| 03  |     | 01  | CO1, K2 |\n| --- | --- | --- | ------- |\nA) Batte                 B) Daara               C) Guruthu\nD) Kappu\nHoliday: __________________\n| 04  |     | 01  | CO1, K2 |\n| --- | --- | --- | ------- |\nA) Kaala                B) Tampu              C) Dina                      D)\nRaja\nTime: __________________\n| 05  |     | 01  | CO1, K2 |\n| --- | --- | --- | ------- |\nA) Kandu               B) Samaya            C) Chikkudu\nD) Doddadu\nExpensive: __________________\n| 06  |     | 01  | CO1, K2 |\n| --- | --- | --- | ------- |\nA) Sannudu            B) Beega               C) Kadmied\nD) Dubari\nPractice: __________________\n| 07  |     | 01  | CO3, K2 |\n| --- | --- | --- | ------- |\nA) Karyakrama      B) Belaggee          C) Abhyasa\nD) Sadhane?\n\nOfficer: __________________\n| 08  |     | 01  | CO1, K2 |\n| --- | --- | --- | ------- |\nA) Pranshupalaru    B) Shikshaka       C) Karmika\nD) Adhikari",
+      "created_at": "2026-05-30T00:45:15.134453",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_9b6307b4",
+      "document_title": "kand2"
+    },
+    {
+      "id": "aa331df5",
+      "title": "kand2 - Part 3",
+      "content": "Fruits: __________________\n| 09  | 01  | CO1, K2 |\n| --- | --- | ------- |\nA) Besige               B) Tarakarigalu    C) Hannugalu\nD) Pustakagalu?\nDifficult: __________________\n| 10  | 01  | CO2, K2 |\n| --- | --- | ------- |\nA) Kashta              B) Ishat                 C) Doora\nD) Hattira\nTranslate English Sentence to Kannada\nWhere did he go: __________________\nA) Neenu ellege hogidde         B) Neenu ellu hogabeda\n| 11  | 01  | CO4, K3 |\n| --- | --- | ------- |\nC) Neenu Oorige hogidya        D) Namaskara idhu\nBelagavina\n I went to village: __________________\nId\n12 A) Naanu cinimage hogidde    B) Naanu maduvege hogidde 01 CO4, K3\nC) Neenu Oorige hogiddeya    D) Naanu Oorige hogidde\nWhy did you go?: __________________\n| 13 A) Elli hogidde     B) Etakke hogidde | 01  | CO3, K3 |\n| ---------------------------------------- | --- | ------- |\nC) tavaga babde   D) tavag bartiya\nWhere your  house: __________________\n| 14 A) Neenu yaaru   B) Nimma mane yellide | 01  | CO3, K2 |\n| ----------------------------------------- | --- | ------- |\nC) Yaru Neenu    D) Idhe namma mane\nWhat is the reason sir: __________________\n| 15 A) Yenu Kaarana sir    B) Kaarana illa sir | 01  | CO3, K2 |\n| --------------------------------------------- | --- | ------- |\nC) Karana idhe sir        D) Karana kodabeka sir",
+      "created_at": "2026-05-30T00:45:15.403946",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_9b6307b4",
+      "document_title": "kand2"
+    },
+    {
+      "id": "04aa5f44",
+      "title": "kand2 - Part 4",
+      "content": "Thank you sir: __________________\n| 16  | 01  | CO4, K2 |\n| --- | --- | ------- |\nA) Paravagilla sir    B) Dhanyavadhagalu sir\nC) Ogi banni sir       D) Barabedi sir\nHad your breakfast : __________________\n| 17 A) Adige aitha?    B) Tindhi aitha ? | 01  | CO3, K2 |\n| --------------------------------------- | --- | ------- |\nC) Elli hogidde     D) Yavag bartiya\nWhen is your exam?: __________________\n| 18 A) Parikshe mugitha     B) Yavaga parikshe | 01  | CO4, K1 |\n| --------------------------------------------- | --- | ------- |\nC) Parikshe beda   D) Prikshe beku\nI am second child: __________________\n| 19 A) Naanu ondhaneya magu    B) Naanu avara magu | 01  | CO3, K3 |\n| ------------------------------------------------- | --- | ------- |\nC) Naanu naalakaneya maga   D) Naanu yeradaneya maga\nOk come fast to the college: __________________\n20 A) Aythu kaalejige bega baa     B) kaalejige bega barabeda 01 CO4, K2\nC) kaaleju illa   D) kaaleju idhe\nBlack: __________________\n| 21  | 01  | CO1, K1 |\n| --- | --- | ------- |\nA) Kappu        B) Bili          C) Hasiru       D) Kempu\nGreen: __________________\n| 22  | 01  | CO1, K1 |\n| --- | --- | ------- |\nA) Hasiru        B) Kesari      C) Kandu      D) Neeli\nRed: __________________\n| 23  | 01  | CO1, K1 |\n| --- | --- | ------- |\nA) Kappu        B) Neeli      C) Kempu       D) Nerale\nDrama: __________________\n| 24  | 01  | CO1, K2 |\n| --- | --- | ------- |\nA) Cinima        B) Nataka       C) Suddi      D) Dharavahi",
+      "created_at": "2026-05-30T00:45:15.702935",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_9b6307b4",
+      "document_title": "kand2"
+    },
+    {
+      "id": "b3248d58",
+      "title": "kand2 - Part 5",
+      "content": "Near: __________________\n| 25  | 01  | CO1, K2 |\n| --- | --- | ------- |\nA) Modalu        B) Hattira     C) Swalpa      D) Swantha\nLesson: __________________\n| 26  | 01  | CO1, K2 |\n| --- | --- | ------- |\nA) Poem       B) Kavithe      C) Paata       D) Prasa\nOnion: __________________\n| 27  | 01  | CO1, K1 |\n| --- | --- | ------- |\nA) Irulli        B) Bellulli       C) Badanekaayi      D)\nThondekaayi\nChilli: __________________\n| 28  | 01  | CO1, K1 |\n| --- | --- | ------- |\nA) Badanekaayi        B) Irulli      C) Bellulli       D) Menasina\nkaayi\nKid: __________________\n| 29  | 01  | CO1, K2 |\n| --- | --- | ------- |\nA) Magu      B) Shubhasanje      C) Prayogalaya     D) Shubha\nratri\nName: __________________\n| 30  | 01  | CO1, K3 |\n| --- | --- | ------- |\nA) Nimma        B) Hesaru      C) Nanu       D) Nammadu\nTranslate Kannada sentences to English\nAa Pustaka Yaradu: __________________\n| 31  | 01  | CO3, K2 |\n| --- | --- | ------- |\nA) Is ours        B) Whose book it is      C) Ours means       D)\nNo that is maries\nAdhu Anoopana pustaka: __________________\n32 A) That is Anoop’s Book       B) That Book is library      01 CO4, K1\n C) That Book is hostel           D) That is my Book\nYara Raju avanu: __________________",
+      "created_at": "2026-05-30T00:45:15.992652",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_9b6307b4",
+      "document_title": "kand2"
+    },
+    {
+      "id": "70a8e09d",
+      "title": "kand2 - Part 6",
+      "content": "33 A) Who is Raju B) Who is that Raju C) My friend 01 CO4, K3\nD) My brother\nHaudhu Neevalla banni: __________________\n34 A) Yes all of you B) I went to village 01 CO1, K1\nC) We also should come D) When did you to\nAa Pustaka nimmada?: ________________\n35 01 CO1, K4\nA) Is one may be B) No C) That book yours D)\nMy book\nRoom Ellide?: ________________\n36 01 CO4, K4\nA) Where is the room B) That room C) Friend room\nD) My room\nAlli ondadaru ideya?: ________________\n37 01 CO4, K1\nA) Is there B) Is there one C) Is there three D) I\nthere four\nAvaru elli idhare?: ________________\n38 A) What are they B) Where are they 01 CO4, K2\nC) Why are you going D) Where are you\nSari nodona bidi: ________________\n39 A) Leave it’s ok B) I don’t want now 01 CO3, K2\nC) Ok we will see that tomorrow D) Ok we will see now\nYavaga barthiya?: ________________\n40 A) When will you come? B) Where are you 01 CO4, K1\nC) Where are you coming D) How are you?\nEga naanu yen maadli?: ________________\n41 A) What should you do? B) What shall I do now 01 CO3, K2",
+      "created_at": "2026-05-30T00:45:16.282450",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_9b6307b4",
+      "document_title": "kand2"
+    },
+    {
+      "id": "8fb31f51",
+      "title": "kand2 - Part 7",
+      "content": "C) What are you doing           D) Where are you diong\nAvarige helodhu beda: ________________\n42 A) Don’t tell them                    B) Tell them about this           01 CO4, K2\nC) Why are you telling the       D) Don’t ask them\nSir neevu Oota maadi?: ________________\n43 A) Sir Don’t eat                  B) Sir have your lunch           01 CO3, K1\nC) Sir have your dinner      D) Sir please eat\nTime Aaitha?: ________________\n| 44  | 01  | CO3, K1 |\n| --- | --- | ------- |\nA) Time is gone         B) Time is there         C) Time is up\nD) Time is there\nKaalegige raje kottidhare?: ________________\nA) Tomorrow is a holiday                    B) Holiday was not\n| 45 given to the college           | 01  | CO3, K1 |\n| --------------------------------- | --- | ------- |\nC) Holiday is not given the college      D) Holiday is given to\nthe college\nFill in the blanks\n C ----- E\n| 46  | 01  | CO2, K1 |\n| --- | --- | ------- |\nA) D     B) F      C) J      D) N\nG-----IÄ\n| 47  | 01  | CO2, K2 |\n| --- | --- | ------- |\nA) E     B) PÀ     C) H     D) C\nPÀ------\n| 48  | 01  | CO2, K2 |\n| --- | --- | ------- |\nA) UÀ       B) R       C) gÀ      D) O\nvÀ-----\n| 49  | 01  | CO2, K2 |\n| --- | --- | ------- |\nA) xÀ      B) l     C) AiÀÄ     D) zÀ",
+      "created_at": "2026-05-30T00:45:16.584283",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_9b6307b4",
+      "document_title": "kand2"
+    },
+    {
+      "id": "2d1c9cd6",
+      "title": "kand2 - Part 8",
+      "content": "±À-----\n50 01 CO2, K2\nA) § B) ¸À C) ºÀ D) µÀ\nCourse Outcomes (COs):\nCOs At the end of the course, the student will be able to\nCO-1 Understand the necessity of learning local language for a comfortable life.\nCO-2 Listen and understand the Kannada language properly.\nCO-3 Speak, read and write Kannada language as per requirement\nCO-4 Communicate (converse) in Kannada language in their daily life with Kannada speakers.\nCO-5 Speak in polite conversation.\nK1- Remembering K2 - Understanding K3 – Applying K4- Analyzing K5 - Evaluating K6 -\nCreating\n“Success is the progressive realization of a worthy goal.”\n**********",
+      "created_at": "2026-05-30T00:45:16.876849",
+      "tags": [
+        "document-upload"
+      ],
+      "document_id": "doc_9b6307b4",
+      "document_title": "kand2"
     }
   ],
   "history": [
@@ -167,6 +555,139 @@
       "answer": "**Newton**'s three **law**s of motion: First **Law** (Inertia) - An object at rest stays at rest unless acted upon by a force. Second **Law** - Force equals mass times acceleration (F=ma). Third **Law** - For every action, there is an equal and opposite reaction. These **law**s form the foundation of classical mechanics.",
       "note_id": "2",
       "asked_at": "2026-04-08T04:11:01.936487"
+    },
+    {
+      "id": "776fdfad",
+      "question": "btute fore",
+      "answer": "I couldn't find a strong match for your question in your notes. Try adding notes about: btute, fore.",
+      "note_id": null,
+      "asked_at": "2026-05-29T23:40:43.957516"
+    },
+    {
+      "id": "fef8a262",
+      "question": "brute fore",
+      "answer": "I couldn't find a strong match for your question in your notes. Try adding notes about: brute, fore.",
+      "note_id": null,
+      "asked_at": "2026-05-29T23:40:53.470714"
+    },
+    {
+      "id": "6e7f4b1d",
+      "question": "brute force",
+      "answer": "1*A*\n#include <st dio.h>\n#include <string.h>\nvoid brut e**Force**PatternMa tch(char T[], char P[]) {\n    int n = strlen(T);\n    int m = strlen(P);\n    int found = 0;\n    for (in t i = 0; i <= n - m; i++) {\n        int j = 0;\n        while (j < m && T[i + j] == P[j]) {\n            j++;\n        }\n        if (j == m) {\n            prin tf(\"P attern f ound a t inde x %d\\n \", i);\n            found = 1;\n        }\n    }\n    if (!f ound)\n        prin tf(\"P attern not f ound\\n \");\n}\nint main() {\n    char t ext[100], pa ttern[1 00];\n    prin tf(\"En ter text: \");\n    scan f(\"%s\" , text);\n    prin tf(\"En ter pa ttern: \");\n    scan f(\"%s\" , pattern);\n    brut e**Force**PatternMa tch(t ext, pattern);\n    return 0;\n}\n1*B\n#include <st dio.h>\n#include <time .h>\nint checkUnique(in t arr[], in t n){\n    int i, j;\n    for(i = 0; i < n; i++){\n        for(j = i + 1; j < n; j++){\n            if(arr[i] == arr[j]) {\n                return 0; / / Duplica te found\n            }\n        }\n    }\n    return 1; / / All elemen ts ar e unique\n}\nint main(){\n    int n, i;\n    prin tf(\"En ter number of elemen ts: \");\n    scan f(\"%d\" , &n);\n    int arr[n];\n    prin tf(\"En ter arr ay elemen ts:\\n \");\n    for(i = 0; i < n; i++){\n        scan f(\"%d\" , &arr[i]);\n    }\n    clock_ t start , end;\n    double time _taken;\n    start = clock();\n    int result = checkUnique(arr , n);\n    end = clock();\n    time _taken = (double)(end - start) / CL OCKS _PER_SE C;\n    if(result)\n        prin tf(\"All elemen ts ar e unique\\n \");\n    else\n        prin tf(\"Duplica te elemen ts found\\n \");\n    prin tf(\"Ex ecution T ime = %f seconds\\n \", time _taken);\n    return 0;\n}\n2\n#include <stdio.h>\nvoid swap(int* a, int* b);\nint partition(int arr[], int low, int high) {\n    int pivot = arr[high];\n    int i = low - 1;\n    for (int j = low; j <= high - 1; j++) {\n        if (arr[j] < pivot) {\n            i++;\n            swap(&arr[i], &arr[j]);\n        }\n    }\n    swap(&arr[i + 1], &arr[high]);\n    return i + 1;\n}\nvoid quickSort(int arr[], int low, int high) {\n    if (low < high) {\n        int pi = partition(arr, low, high);\n        quickSort(arr, low, pi - 1);\n        quickSort(arr, pi + 1, high);\n    }\n}\nvoid swap(int* a, int* b) {\n    int t = *a;\n    *a = *b;\n    *b = t;\n}\nint main() {\n    int n;\n    printf(\"Enter number of elements: \");\n    scanf(\"%d\", &n);\n    int arr[n];\n    printf(\"Enter %d elements:\\n\", n);\n    for(int i = 0; i < n; i++) {\n        scanf(\"%d\", &arr[i]);\n    }\n    quickSort(arr, 0, n - 1);\n    printf(\"Sorted array:\\n\");\n    for (int i = 0; i < n; i++) {\n        printf(\"%d \", arr[i]);\n    }\n    return 0;\n}\n3\n#inclu de <st dio.h>\n#include <st dlib.h>\n#include <time .h>\nvoid mer ge(int a[], in t l, int m, in t r){\n    int i=l, j=m+1 , k=l , temp[1 00000];\n    while(i<=m && j<=r)\n        temp[k++] = (a[i] < a[j]) ? a[i++] : a[j++];\n    while(i<=m) t emp[k++] = a[i++];\n    while(j<=r) t emp[k++] = a[j++];\n    for(i=l;i<=r;i++)\n        a[i] = t emp[i];\n}\nvoid mer gesort(in t a[], in t l, int r){\n    if(l<r){\n        int m=(l+r)/2;\n        mer gesort(a ,l,m);\n        mer gesort(a ,m+1 ,r);\n        mer ge(a,l,m,r);\n    }\n}\nint main(){\n    int n,i,a[1 00000];\n    clock_ t start ,end;\n    prin tf(\"En ter n: \");\n    scan f(\"%d\" ,&n);\n    for(i=0;i<n;i++)\n        a[i]=r and();    \n    start=clock();\n    mer gesort(a ,0,n-1);\n    end=clock();\n    prin tf(\"Time tak en = %f seconds\\n \",\n           (double)(end- start)/ CLOCKS _PER_SE C);\n    return 0;\n}\n4\n#inclu de <st dio.h>\nstruct Edg e {\n    int u, v , w;\n} e[20], t emp;\nint par ent[20];\nint find(in t i) {\n    while (par ent[i] != i)\n        i = par ent[i];\n    return i;\n}\nint uni(in t i, in t j) {\n    if (i != j) {\n        parent[j] = i;\n        return 1;\n    }\n    return 0;\n}\nint main() {\n    int n, m, i, j, cost = 0 , coun t = 0;\n    prin tf(\"En ter vertices and edg es: \");\n    scan f(\"%d%d\" , &n, &m);\n    for (i = 0; i < n; i++)\n        parent[i] = i;\n    prin tf(\"En ter u v w eigh t:\\n\");\n    for (i = 0; i < m; i++)\n        scan f(\"%d%d%d\" , &e[i]. u, &e[i]. v, &e[i]. w);\n    for (i = 0; i < m - 1; i++) {\n        for (j = 0; j < m - i - 1; j++) {\n            if (e[j]. w > e[j + 1]. w) {\n                temp = e[j];\n                e[j] = e[j + 1];\n                e[j + 1] = t emp;\n            }\n        }\n    }\n    prin tf(\"Edg es in MS T:\\n\");\n    for (i = 0; i < m; i++) {\n        int a = find(e[i]. u);\n        int b = find(e[i]. v);\n        if (uni(a , b)) {\n            prin tf(\"%d -- %d = %d\\n \", e[i]. u, e[i]. v, e[i]. w);\n            cost += e[i]. w;\n            coun t++;\n        }\n        if (coun t == n - 1)\n            break;\n    }\n    prin tf(\"Minimum Cost = %d\\n \", cost);\n    return 0;\n}\n5\n#include <st dio.h>\n#include <limits .h>\n#include <st dbool .h>\n#define V 5\nint minK ey(in t key[], bool mst[]) {\n    int min = INT _MAX, inde x;\n    for (in t i = 0; i < V ; i++)\n        if (!mst[i] && k ey[i] < min)\n            min = k ey[i], inde x = i;\n    return inde x;\n}\nvoid primMS T(int graph[V][V]) {\n    int par ent[V], k ey[V], cost = 0;\n    bool mst[V];\n    for (in t i = 0; i < V ; i++) {\n        key[i] = INT _MAX;\n        mst[i] = f alse;\n    }\n    key[0] = 0;\n    parent[0] = - 1;\n    for (in t i = 0; i < V - 1; i++) {\n        int u = minK ey(k ey, mst);\n        mst[u] = true;\n        for (in t v = 0; v < V ; v++) {\n            if (gr aph[u][v] && !mst[v] && gr aph[u][v] < k ey[v]) {\n                parent[v] = u;\n                key[v] = gr aph[u][v];\n            }\n        }\n    }\n    prin tf(\"Edg e \\tW eigh t\\n\");\n    for (in t i = 1; i < V ; i++) {\n        prin tf(\"%d - %d \\t%d\\n \", par ent[i], i, gr aph[i][par ent[i]]);\n        cost += gr aph[i][par ent[i]];\n    }\n    prin tf(\"Minimum Cost = %d\\n \", cost);\n}\nint main() {\n    int graph[V][V] = {\n        {0,2,0,6,0},\n        {2,0,3,8,5},\n        {0,3,0,0,7},\n        {6,8,0,0,9},\n        {0,5,7,9,0}\n    };\n    primMS T(gr aph);\n    return 0;\n}",
+      "note_id": "15bdbea1",
+      "asked_at": "2026-05-29T23:40:59.733884"
+    },
+    {
+      "id": "067d1667",
+      "question": "brute force",
+      "answer": "⚠️ OpenRouter error: \n\nYou tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.\n\nYou can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. \n\nAlternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`\n\nA detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742\n",
+      "note_id": "15bdbea1",
+      "asked_at": "2026-05-29T23:41:34.897869"
+    },
+    {
+      "id": "c667d406",
+      "question": "brute force",
+      "answer": "⚠️ OpenRouter error: \n\nYou tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.\n\nYou can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. \n\nAlternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`\n\nA detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742\n",
+      "note_id": "15bdbea1",
+      "asked_at": "2026-05-29T23:42:07.066322"
+    },
+    {
+      "id": "4e807222",
+      "question": "summarize",
+      "answer": "I couldn't find a strong match for your question in your notes. Try adding notes about: summarize.",
+      "note_id": null,
+      "asked_at": "2026-05-30T00:29:34.294604"
+    },
+    {
+      "id": "8361b794",
+      "question": "explain program6",
+      "answer": "I couldn't find a strong match for your question in your notes. Try adding notes about: program6.",
+      "note_id": null,
+      "asked_at": "2026-05-30T00:43:58.270058"
+    },
+    {
+      "id": "0ebf406c",
+      "question": "kruskal",
+      "answer": "I couldn't find a strong match for your question in your notes. Try adding notes about: kruskal.",
+      "note_id": null,
+      "asked_at": "2026-05-30T00:44:10.468024"
+    },
+    {
+      "id": "ac3b1c16",
+      "question": "A",
+      "answer": "I couldn't understand your question. Could you rephrase it with more specific terms?",
+      "note_id": null,
+      "asked_at": "2026-05-30T00:44:19.160028"
+    },
+    {
+      "id": "4b85fc4c",
+      "question": "a",
+      "answer": "I couldn't understand your question. Could you rephrase it with more specific terms?",
+      "note_id": null,
+      "asked_at": "2026-05-30T00:44:22.845924"
+    },
+    {
+      "id": "2dc19c8a",
+      "question": "near",
+      "answer": "**Near**: __________________\n| 25  | 01  | CO1, K2 |\n| --- | --- | ------- |\nA) Modalu        B) Hattira     C) Swalpa      D) Swantha\nLesson: __________________\n| 26  | 01  | CO1, K2 |\n| --- | --- | ------- |\nA) Poem       B) Kavithe      C) Paata       D) Prasa\nOnion: __________________\n| 27  | 01  | CO1, K1 |\n| --- | --- | ------- |\nA) Irulli        B) Bellulli       C) Badanekaayi      D)\nThondekaayi\nChilli: __________________\n| 28  | 01  | CO1, K1 |\n| --- | --- | ------- |\nA) Badanekaayi        B) Irulli      C) Bellulli       D) Menasina\nkaayi\nKid: __________________\n| 29  | 01  | CO1, K2 |\n| --- | --- | ------- |\nA) Magu      B) Shubhasanje      C) Prayogalaya     D) Shubha\nratri\nName: __________________\n| 30  | 01  | CO1, K3 |\n| --- | --- | ------- |\nA) Nimma        B) Hesaru      C) Nanu       D) Nammadu\nTranslate Kannada sentences to English\nAa Pustaka Yaradu: __________________\n| 31  | 01  | CO3, K2 |\n| --- | --- | ------- |\nA) Is ours        B) Whose book it is      C) Ours means       D)\nNo that is maries\nAdhu Anoopana pustaka: __________________\n32 A) That is Anoop’s Book       B) That Book is library      01 CO4, K1\n C) That Book is hostel           D) That is my Book\nYara Raju avanu: __________________",
+      "note_id": "b3248d58",
+      "asked_at": "2026-05-30T00:45:44.449548"
+    },
+    {
+      "id": "c7f55328",
+      "question": "world war",
+      "answer": "⚠️ OpenRouter error: \n\nYou tried to access openai.ChatCompletion, but this is no longer supported in openai>=1.0.0 - see the README at https://github.com/openai/openai-python for the API.\n\nYou can run `openai migrate` to automatically upgrade your codebase to use the 1.0.0 interface. \n\nAlternatively, you can pin your installation to the old version, e.g. `pip install openai==0.28`\n\nA detailed migration guide is available here: https://github.com/openai/openai-python/discussions/742\n",
+      "note_id": "3",
+      "asked_at": "2026-05-30T00:53:30.058914"
+    },
+    {
+      "id": "6839598f",
+      "question": "world war",
+      "answer": "⚠️ OpenRouter error: Error code: 400 - {'error': {'message': 'google/gemini-2.5-flash-1m is not a valid model ID', 'code': 400}, 'user_id': 'user_3BTD0eo4xQnr2LI0jOij13omJW5'}",
+      "note_id": "3",
+      "asked_at": "2026-05-30T00:56:18.388153"
+    },
+    {
+      "id": "fa2eadc4",
+      "question": "world war",
+      "answer": "World War II lasted from **1939 to 1945** and involved most of the world’s nations, divided into two main alliances:\n\n- **Allies**\n- **Axis powers**\n\nKey events included:\n\n- The **invasion of Poland**\n- The **Battle of Stalingrad**\n- **D-Day**, also called the **Normandy landings**\n- The atomic bombings of **Hiroshima and Nagasaki**\n\nThe war ended with the surrender of **Germany and Japan**.",
+      "note_id": "3",
+      "asked_at": "2026-05-30T01:02:01.062804"
+    },
+    {
+      "id": "febcec10",
+      "question": "world war",
+      "answer": "**World** **War** II lasted from 1939 to 1945. It involved most of the **world**'s nations divided into two opposing alliances: the Allies and the Axis powers. Key events include the invasion of Poland, the Battle of Stalingrad, D-Day (Normandy landings), and the atomic bombings of Hiroshima and Nagasaki. The **war** ended with the surrender of Germany and Japan.",
+      "note_id": "3",
+      "asked_at": "2026-05-30T01:02:34.580343"
+    },
+    {
+      "id": "8266d12c",
+      "question": "world war",
+      "answer": "World War II lasted from **1939 to 1945** and involved most of the world’s nations, divided into two major alliances:\n\n- **Allies**\n- **Axis powers**\n\nKey events included:\n\n- The **invasion of Poland**\n- The **Battle of Stalingrad**\n- **D-Day**, also known as the **Normandy landings**\n- The atomic bombings of **Hiroshima and Nagasaki**\n\nThe war ended with the surrender of **Germany** and **Japan**.",
+      "note_id": "3",
+      "asked_at": "2026-05-30T01:04:37.946970"
+    },
+    {
+      "id": "d6e24631",
+      "question": "world war",
+      "answer": "World War II lasted from **1939 to 1945** and involved most of the world’s nations. Countries were divided into two major alliances:\n\n- **The Allies**\n- **The Axis powers**\n\nKey events included:\n\n- The **invasion of Poland**\n- The **Battle of Stalingrad**\n- **D-Day**, also called the Normandy landings\n- The atomic bombings of **Hiroshima and Nagasaki**\n\nThe war ended with the surrender of **Germany and Japan**.",
+      "note_id": "3",
+      "asked_at": "2026-05-30T01:06:49.124960"
+    },
+    {
+      "id": "493bc7b5",
+      "question": "world war",
+      "answer": "World War II lasted from **1939 to 1945** and involved most of the world’s nations, divided into two main alliances: the **Allies** and the **Axis powers**.\n\nKey events included:\n\n- The **invasion of Poland**\n- The **Battle of Stalingrad**\n- **D-Day**, also known as the Normandy landings\n- The atomic bombings of **Hiroshima and Nagasaki**\n\nThe war ended with the surrender of **Germany and Japan**.",
+      "note_id": "3",
+      "asked_at": "2026-05-30T01:07:08.111581"
+    },
+    {
+      "id": "71c9149d",
+      "question": "WHAT IS THIS?",
+      "answer": "This is a **GSSoC 2026 AI Agents Track** badge/logo.\n\nIt includes:\n- **GS Labs by GirlScript Foundation**\n- **GSSoC 2026**\n- Tagline: **Build • Automate • Deploy**\n- Track: **AI Agents Track**",
+      "note_id": "b77e0e30",
+      "asked_at": "2026-05-30T01:16:07.355191"
     }
   ]
 }

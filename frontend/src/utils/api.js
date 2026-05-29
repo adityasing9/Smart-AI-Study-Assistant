@@ -1,4 +1,4 @@
-const API_BASE = 'https://study-klej.onrender.com/api';
+const API_BASE = 'http://127.0.0.1:8000/api';
 
 async function request(url, options = {}) {
   const res = await fetch(`${API_BASE}${url}`, {
@@ -18,8 +18,27 @@ export const api = {
   addNote: (data) => request('/notes', { method: 'POST', body: JSON.stringify(data) }),
   deleteNote: (id) => request(`/notes/${id}`, { method: 'DELETE' }),
 
+  // Document Upload
+  uploadDocument: async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch(`${API_BASE}/upload`, {
+      method: 'POST',
+      body: formData,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: 'Upload failed' }));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+    return res.json();
+  },
+
+  // Documents
+  getDocuments: () => request('/documents'),
+
   // AI
-  askQuestion: (question, mode = 'classic') => request('/ask', { method: 'POST', body: JSON.stringify({ question, mode }) }),
+  askQuestion: (question, mode = 'classic', document_id = null, image_data = null) => 
+    request('/ask', { method: 'POST', body: JSON.stringify({ question, mode, document_id, image_data }) }),
 
   // History
   getHistory: () => request('/history'),

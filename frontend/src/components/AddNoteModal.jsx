@@ -48,7 +48,7 @@ export default function AddNoteModal({ isOpen, onClose, onAdd }) {
           onClick={onClose}
         >
           {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-white/60 backdrop-blur-sm" />
 
           {/* Modal */}
           <motion.div
@@ -62,51 +62,51 @@ export default function AddNoteModal({ isOpen, onClose, onAdd }) {
             {/* Close */}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-all"
+              className="absolute top-4 right-4 p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-900/5 transition-all"
             >
               <HiOutlineXMark className="text-xl" />
             </button>
 
-            <h2 className="text-xl font-bold text-white mb-1">Add New Note</h2>
-            <p className="text-sm text-slate-400 mb-6">Capture your knowledge</p>
+            <h2 className="text-xl font-bold text-slate-900 mb-1">Add New Note</h2>
+            <p className="text-sm text-slate-600 mb-6">Capture your knowledge</p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Title */}
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1.5">Title</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">Title</label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. Newton's Laws of Motion"
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/25 transition-all"
+                  className="w-full px-4 py-3 rounded-xl bg-slate-900/5 border border-slate-900/10 text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/25 transition-all"
                   required
                 />
               </div>
 
               {/* Content */}
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1.5">Content</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">Content</label>
                 <textarea
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   placeholder="Write your study notes here..."
                   rows={5}
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/25 transition-all resize-none"
+                  className="w-full px-4 py-3 rounded-xl bg-slate-900/5 border border-slate-900/10 text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/25 transition-all resize-none"
                   required
                 />
               </div>
 
               {/* Tags */}
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1.5">
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">
                   Tags <span className="text-slate-500">(press Enter to add)</span>
                 </label>
                 <div className="flex flex-wrap gap-2 mb-2">
                   {tags.map((tag) => (
                     <span
                       key={tag}
-                      className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-purple-500/15 text-purple-300 border border-purple-500/20 cursor-pointer hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 transition-colors"
+                      className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-500/15 text-slate-700 border border-emerald-500/20 cursor-pointer hover:bg-emerald-500/10 hover:text-red-400 hover:border-emerald-500/20 transition-colors"
                       onClick={() => removeTag(tag)}
                     >
                       <HiOutlineTag className="text-[10px]" />
@@ -120,7 +120,7 @@ export default function AddNoteModal({ isOpen, onClose, onAdd }) {
                   onChange={(e) => setTagInput(e.target.value)}
                   onKeyDown={handleAddTag}
                   placeholder="e.g. physics, science"
-                  className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/25 transition-all text-sm"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-900/5 border border-slate-900/10 text-slate-900 placeholder-slate-500 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/25 transition-all text-sm"
                 />
               </div>
 
@@ -128,7 +128,7 @@ export default function AddNoteModal({ isOpen, onClose, onAdd }) {
               <button
                 type="submit"
                 disabled={loading || !title.trim() || !content.trim()}
-                className="w-full py-3 rounded-xl font-semibold text-white gradient-bg hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25"
+                className="w-full py-3 rounded-xl font-semibold text-slate-900 gradient-bg hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
               >
                 <HiOutlinePlusCircle className="text-lg" />
                 {loading ? 'Adding...' : 'Add Note'}

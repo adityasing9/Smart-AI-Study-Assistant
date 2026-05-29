@@ -12,7 +12,7 @@ export default function SuggestedNotes({ notes, title = 'You may also like' }) {
     >
       <div className="flex items-center gap-2 mb-4">
         <HiOutlineLightBulb className="text-yellow-400" />
-        <h3 className="text-sm font-semibold text-slate-300">{title}</h3>
+        <h3 className="text-sm font-semibold text-slate-700">{title}</h3>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -24,13 +24,13 @@ export default function SuggestedNotes({ notes, title = 'You may also like' }) {
             transition={{ delay: 0.3 + i * 0.1 }}
             className="glass-card p-4 cursor-pointer group"
           >
-            <h4 className="text-sm font-semibold text-white mb-1.5 line-clamp-1 group-hover:text-purple-300 transition-colors">
+            <h4 className="text-sm font-semibold text-slate-900 mb-1.5 line-clamp-1 group-hover:text-slate-700 transition-colors">
               {note.title}
             </h4>
-            <p className="text-xs text-slate-400 line-clamp-2 mb-2 leading-relaxed">
+            <p className="text-xs text-slate-600 line-clamp-2 mb-2 leading-relaxed">
               {note.content}
             </p>
-            <div className="flex items-center gap-1 text-xs text-purple-400 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="flex items-center gap-1 text-xs text-slate-900 font-medium opacity-0 group-hover:opacity-100 transition-opacity">
               <span>View</span>
               <HiOutlineArrowRight className="text-[10px]" />
             </div>
