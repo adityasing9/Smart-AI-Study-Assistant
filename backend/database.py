@@ -1,130 +1,92 @@
-"""
-JSON-based database module for AI Study Brain.
-Handles CRUD operations for notes and question history.
-"""
-
-import json
 import os
 import uuid
 from datetime import datetime
-from pathlib import Path
+from supabase import create_client, Client
+from dotenv import load_dotenv
 
-DATA_DIR = Path(__file__).parent / "data"
-NOTES_FILE = DATA_DIR / "notes.json"
+load_dotenv()
 
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
+SUPABASE_KEY = os.environ.get("SUPABASE_ANON_KEY", "")
 
-def _ensure_data_file():
-    """Ensure the data directory and file exist."""
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
-    if not NOTES_FILE.exists():
-        with open(NOTES_FILE, "w") as f:
-            json.dump({"notes": [], "history": []}, f)
-
-
-def _read_db():
-    """Read the entire database."""
-    _ensure_data_file()
-    with open(NOTES_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-
-def _write_db(data):
-    """Write the entire database."""
-    _ensure_data_file()
-    with open(NOTES_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
-
-
-# ──────────────────────────── Notes CRUD ────────────────────────────
-
+try:
+    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+except Exception as e:
+    print(f"Supabase client failed to initialize: {e}")
+    supabase = None
 
 def get_all_notes():
-    """Return all notes sorted by newest first."""
-    db = _read_db()
-    return sorted(db["notes"], key=lambda n: n["created_at"], reverse=True)
-
-
-def get_documents():
-    """Return unique documents extracted from notes."""
-    db = _read_db()
-    docs = {}
-    for n in db["notes"]:
-        if n.get("document_id"):
-            docs[n["document_id"]] = {
-                "document_id": n["document_id"],
-                "document_title": n.get("document_title", "Untitled Document")
-            }
-    return list(docs.values())
-
+    if not supabase: return []
+    response = supabase.table("study_notes").select("*").execute()
+    return response.data
 
 def search_notes(query: str):
-    """Search notes by title or content (case-insensitive)."""
-    query_lower = query.lower()
-    notes = get_all_notes()
-    return [
-        n for n in notes
-        if query_lower in n["title"].lower() or query_lower in n["content"].lower()
-    ]
+    if not supabase: return []
+    response = supabase.table("study_notes").select("*").ilike("content", f"%{query}%").execute()
+    return response.data
 
-
-def get_note_by_id(note_id: str):
-    """Get a single note by ID."""
-    db = _read_db()
-    for note in db["notes"]:
-        if note["id"] == note_id:
-            return note
-    return None
-
-
-def add_note(title: str, content: str, tags: list[str] | None = None, document_id: str | None = None, document_title: str | None = None):
-    """Add a new note and return it."""
-    db = _read_db()
+def add_note(title, content, tags=None, document_id=None, document_title=None):
+    if tags is None:
+        tags = []
+    
     note = {
         "id": str(uuid.uuid4())[:8],
-        "title": title.strip(),
-        "content": content.strip(),
-        "created_at": datetime.now().isoformat(),
-        "tags": tags or [],
+        "title": title,
+        "content": content,
+        "tags": tags,
         "document_id": document_id,
         "document_title": document_title
     }
-    db["notes"].append(note)
-    _write_db(db)
+    
+    if supabase:
+        supabase.table("study_notes").insert(note).execute()
     return note
 
+def update_note_embedding(note_id: str, embedding: list):
+    if supabase:
+        supabase.table("study_notes").update({"embedding": embedding}).eq("id", note_id).execute()
 
-def delete_note(note_id: str):
-    """Delete a note by ID. Returns True if found and deleted."""
-    db = _read_db()
-    original_len = len(db["notes"])
-    db["notes"] = [n for n in db["notes"] if n["id"] != note_id]
-    if len(db["notes"]) < original_len:
-        _write_db(db)
-        return True
-    return False
+def delete_note(note_id):
+    if supabase:
+        supabase.table("study_notes").delete().eq("id", note_id).execute()
+    return True
 
+def get_history():
+    if not supabase: return []
+    response = supabase.table("ask_history").select("*").order("asked_at", desc=True).execute()
+    return response.data
 
-# ──────────────────────────── History ────────────────────────────
-
-
-def add_history_entry(question: str, answer: str, note_id: str | None = None):
-    """Log a question/answer pair."""
-    db = _read_db()
+def add_history_entry(question, answer, matched_note_id=None):
     entry = {
         "id": str(uuid.uuid4())[:8],
         "question": question,
         "answer": answer,
-        "note_id": note_id,
-        "asked_at": datetime.now().isoformat(),
+        "matched_note_id": matched_note_id
     }
-    db["history"].append(entry)
-    # Keep only the last 50 entries
-    db["history"] = db["history"][-50:]
-    _write_db(db)
-    return entry
+    if supabase:
+        supabase.table("ask_history").insert(entry).execute()
 
+def get_documents():
+    if not supabase: return []
+    response = supabase.table("study_notes").select("document_id, document_title").not_.is_("document_id", "null").execute()
+    
+    # Deduplicate
+    docs = {}
+    for note in response.data:
+        docs[note["document_id"]] = note["document_title"]
+        
+    return [{"document_id": k, "document_title": v} for k, v in docs.items()]
 
-def get_history():
-    """Return question history, newest first."""
-    db = _read_db()
-    return sorted(db["history"], key=lambda h: h["asked_at"], reverse=True)
+def match_study_notes(query_embedding: list, match_threshold: float = 0.5, match_count: int = 3, filter_document_id: str = None):
+    if not supabase: return []
+    
+    params = {
+        "query_embedding": query_embedding,
+        "match_threshold": match_threshold,
+        "match_count": match_count
+    }
+    if filter_document_id:
+        params["filter_document_id"] = filter_document_id
+        
+    response = supabase.rpc("match_study_notes", params).execute()
+    return response.data

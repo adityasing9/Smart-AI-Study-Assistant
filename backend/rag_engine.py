@@ -1,14 +1,12 @@
 import os
+import json
+import httpx
 from dotenv import load_dotenv
-import chromadb
 from openai import OpenAI
+import database as db
 
 # Load environment variables
 load_dotenv()
-
-# Initialize ChromaDB
-chroma_client = chromadb.PersistentClient(path="./data/chromadb")
-collection = chroma_client.get_or_create_collection(name="study_notes")
 
 # Setup OpenRouter Client
 openai_client = OpenAI(
@@ -16,59 +14,51 @@ openai_client = OpenAI(
     api_key=os.getenv("OPENROUTER_API_KEY")
 )
 
+def get_embedding(text: str) -> list[float]:
+    """Fetch embeddings from OpenRouter using Jina."""
+    api_key = os.getenv("OPENROUTER_API_KEY")
+    if not api_key:
+        return []
+    
+    url = "https://openrouter.ai/api/v1/embeddings"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "model": "jinaai/jina-embeddings-v2-base-en",
+        "input": text
+    }
+    
+    try:
+        response = httpx.post(url, headers=headers, json=payload, timeout=15.0)
+        response.raise_for_status()
+        data = response.json()
+        if "data" in data and len(data["data"]) > 0:
+            return data["data"][0]["embedding"]
+    except Exception as e:
+        print(f"[RAG Engine Error] Failed to get embedding: {e}")
+    return []
+
 
 def sync_all_notes(notes):
-    try:
-        existing = collection.get()
-        if existing["ids"]:
-            collection.delete(ids=existing["ids"])
-
-        if not notes:
-            return
-
-        documents, metadatas, ids = [], [], []
-
-        for note in notes:
-            content_block = f"Title: {note['title']}\nTags: {', '.join(note.get('tags', []))}\nContent: {note['content']}"
-            documents.append(content_block)
-            meta = {
-                "id": note["id"],
-                "title": note["title"],
-            }
-            if note.get("document_id"):
-                meta["document_id"] = note["document_id"]
-            metadatas.append(meta)
-            ids.append(note["id"])
-
-        collection.add(documents=documents, metadatas=metadatas, ids=ids)
-
-        print(f"[RAG Engine] Synced {len(notes)} notes into vector store.")
-
-    except Exception as e:
-        print(f"[RAG Engine Error] Failed to sync notes: {e}")
+    # Disabled for cloud DB to prevent mass overwriting on cold starts
+    pass
 
 
 def add_note_to_vector_store(note):
     try:
         content_block = f"Title: {note['title']}\nTags: {', '.join(note.get('tags', []))}\nContent: {note['content']}"
-        meta = {"id": note["id"], "title": note["title"]}
-        if note.get("document_id"):
-            meta["document_id"] = note["document_id"]
-        
-        collection.add(
-            documents=[content_block],
-            metadatas=[meta],
-            ids=[note["id"]],
-        )
+        embedding = get_embedding(content_block)
+        if embedding:
+            db.update_note_embedding(note["id"], embedding)
     except Exception as e:
-        print(f"[RAG Engine Error] Failed to add note {note['id']}: {e}")
+        print(f"[RAG Engine Error] Failed to embed note {note['id']}: {e}")
 
 
 def delete_note_from_vector_store(note_id):
-    try:
-        collection.delete(ids=[note_id])
-    except Exception as e:
-        print(f"[RAG Engine Error] Failed to delete note {note_id}: {e}")
+    # Deletion is natively handled by Supabase database.py calls
+    pass
 
 
 def generate_smart_answer(question, document_id=None, image_data=None):
@@ -82,14 +72,17 @@ def generate_smart_answer(question, document_id=None, image_data=None):
             "related_notes": [],
         }
 
-    # 🔍 Retrieve context
+    # 🔍 Retrieve context via Supabase vector search
     try:
-        where_filter = {"document_id": document_id} if document_id else None
-        
-        results = collection.query(
-            query_texts=[question], 
-            n_results=min(3, collection.count()),
-            where=where_filter
+        query_embedding = get_embedding(question)
+        if not query_embedding:
+            raise Exception("Failed to generate embedding for the question.")
+            
+        results = db.match_study_notes(
+            query_embedding=query_embedding,
+            match_threshold=0.3,
+            match_count=3,
+            filter_document_id=document_id
         )
     except Exception as e:
         return {
@@ -99,7 +92,7 @@ def generate_smart_answer(question, document_id=None, image_data=None):
             "related_notes": [],
         }
 
-    if not results["documents"] or not results["documents"][0]:
+    if not results or len(results) == 0:
         return {
             "answer": "No relevant notes found for this document." if document_id else "No relevant notes found.",
             "matched_note": None,
@@ -107,8 +100,17 @@ def generate_smart_answer(question, document_id=None, image_data=None):
             "related_notes": [],
         }
 
-    docs = results["documents"][0]
-    meta = results["metadatas"][0]
+    # Format the results
+    docs = []
+    meta = []
+    for r in results:
+        content_block = f"Title: {r['title']}\nTags: {', '.join(r.get('tags', []))}\nContent: {r['content']}"
+        docs.append(content_block)
+        meta.append({
+            "id": r["id"],
+            "title": r["title"],
+            "document_id": r.get("document_id")
+        })
 
     context = "\n\n---\n\n".join(docs)
 
@@ -128,7 +130,7 @@ def generate_smart_answer(question, document_id=None, image_data=None):
             }
         ]
 
-    # 🤖 OpenRouter call (FIXED for v1)
+    # 🤖 OpenRouter call
     try:
         response = openai_client.chat.completions.create(
             model=os.getenv("OPENROUTER_MODEL", "openrouter/auto"),

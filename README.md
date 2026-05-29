@@ -33,7 +33,166 @@ When you ask a question in "Smart AI" mode, the **Retrieval-Augmented Generation
 - **Augmentation**: The backend creates a hidden prompt, injecting those 3 retrieved paragraphs as strict context.
 - **Generation**: The Large Language Model (e.g., Gemini or GPT-4o) reads the augmented prompt and generates a conversational answer based *only* on the retrieved context, effectively eliminating hallucinations.
 
+
 ---
+
+## 🔄 End-to-End System Workflows
+
+This project implements three primary workflows: **Document Ingestion (NLP)**, **Semantic Q&A (RAG)**, and **Multimodal Visual Reasoning**.
+
+### 1. Document Upload & NLP Indexing Pipeline
+When a user uploads a document (PDF, DOCX, XLSX, TXT) via the dashboard:
+1. **File Reception**: FastAPI accepts the binary file, creates a temporary file on disk, and passes it to Microsoft's `markitdown` parser.
+2. **Text Extraction**: The parser extracts structural text, retaining tables, markdown layout, and text blocks.
+3. **Semantic Chunking**: Large blocks of text are parsed and split into overlapping chunks of approximately 1,500 characters. This maintains contextual integrity while adhering to the LLM context size and search specificity limits.
+4. **Embedding Generation**: For each chunk, the content is compiled (including title and tags) and sent to the Jina AI embeddings model (`jina-embeddings-v2-base-en`). This model maps the semantic meaning of the text onto a **768-dimensional floating-point vector space**.
+5. **Database Storage**: The raw text, title, document ID, tags, and the high-dimensional embedding vector are saved into Supabase Postgres database.
+
+```mermaid
+graph TD
+    A[User Uploads Document] -->|HTTP POST /api/upload| B(FastAPI Server)
+    B -->|Save Temp File| C[markitdown Parser]
+    C -->|Extract Text| D[Semantic Chunking Engine <1500 Chars]
+    D -->|For Each Chunk| E[Format Title + Tags + Content]
+    E -->|Fetch Embeddings| F[OpenRouter Jina Embeddings API]
+    F -->|Return 768-Dimension Vector| G[Supabase Postgres Insert]
+    G -->|Store Raw Metadata + Embedding Vector| H[(study_notes Table with pgvector)]
+```
+
+### 2. Retrieval-Augmented Generation (RAG) Query Pipeline
+When a query is executed in **Smart Mode**:
+1. **Query Embedding**: The user's prompt is embedded into a 768-dimensional vector using Jina AI embeddings.
+2. **Cosine Similarity Search**: FastAPI queries Supabase using a Remote Procedure Call (RPC) `match_study_notes`. This compares the question vector against all stored note vectors using cosine distance computation ($1 - \text{cosine\_distance}$).
+3. **Context Construction**: The top $K$ (configured to 3) highest scoring text blocks are retrieved.
+4. **Prompt Augmentation**: The retrieved text chunks are injected into a structured system prompt as "Ground Truth" context.
+5. **Inference & Stream**: The model (configured via OpenRouter) processes the augmented prompt under strict instructions to answer *only* based on the context, preventing AI hallucinations.
+
+```mermaid
+graph TD
+    A[User Asks Question] -->|Smart Mode Request| B(FastAPI Server)
+    B -->|Get Query Embedding| C[OpenRouter Jina Embeddings API]
+    C -->|Return 768d Vector| D[Supabase Vector Similarity Search RPC]
+    D -->|Cosine Match > Threshold| E[Retrieve Top 3 Context Chunks]
+    E -->|Construct Augmented Prompt| F[OpenRouter LLM Inference]
+    F -->|Process Context + Question| G[LLM Synthesized Response]
+    G -->|Save to ask_history| H[Return JSON Response to Frontend]
+```
+
+### 3. Multimodal Vision Pipeline
+When a user pastes an image (diagram, equation, flowchart) into the chat:
+1. **Base64 Encoding**: The React frontend reads the clipboard, converts the image to base64 data, and previews it in the UI.
+2. **Context Retrieval**: The query text's vector is matched against the database to fetch text context.
+3. **Multimodal API Request**: The text context, question, and base64 image data are bundled as a multimodal payload and sent to OpenRouter's vision models.
+
+```mermaid
+graph TD
+    A[User Pastes Image + Types Question] -->|React Frontend| B[Base64 Encoding]
+    B -->|HTTP POST /api/ask| C(FastAPI Server)
+    C -->|Optional Vector Match| D[Fetch Text Context]
+    D -->|Combine Image + Text Context| E[OpenRouter Vision API]
+    E -->|Analyze Image + Context| F[Return Multi-Modal Response]
+```
+
+---
+
+## 🛠️ Step-by-Step Development Journey (How It Was Made)
+
+The system evolved through distinct development phases, focusing on scalability, serverless compatibility, and modern UI design.
+
+### Phase 1: Local Ideation & Monolithic Prototypes
+- **Initial Setup**: The project started as a Python backend and simple HTML file testing keyword-based search.
+- **Classic Search Engine**: Built an in-memory TF-IDF search implementation using Python's standard `re` and `collections.Counter` libraries. This allowed the system to perform fast keyword matching without needing external heavy NLP libraries like Scikit-learn or NLTK, making it lightweight.
+- **Local Persistence**: Uploaded notes were stored in a local flat JSON file (`notes.json`), and embeddings were generated locally and index-searched via `ChromaDB` (a local directory-based vector store).
+
+### Phase 2: The Serverless Cloud Migration
+When shifting from a local proof-of-concept to a production cloud deployment, two major architectural barriers were encountered:
+1. **Ephemerality of Serverless Functions**: Hosting the FastAPI app on Vercel Serverless Functions meant that the backend environment was entirely stateless. Server instances spin up to handle requests and shut down immediately after. This meant a local SQLite file database or ChromaDB filesystem directory would be wiped clean on cold starts, losing all uploaded files.
+2. **Stateless Vector database solution**: We migrated the database completely to **Supabase**.
+   - SQLite was replaced by hosted **PostgreSQL**.
+   - ChromaDB was replaced by **`pgvector`** (a native Postgres vector search extension).
+   - This database architecture allows our backend functions on Vercel to remain stateless, querying the vector database via cloud network connections.
+
+#### 📁 Cloud Database Schema Definitions
+To configure the Supabase cloud PostgreSQL server, the following SQL was executed to initialize pgvector and establish matching procedures:
+
+```sql
+-- 1. Enable the pgvector extension to store and search vector math
+create extension if not exists vector;
+
+-- 2. Create the study_notes table
+create table study_notes (
+    id text primary key,
+    title text not null,
+    content text not null,
+    tags text[] default '{}',
+    document_id text,
+    document_title text,
+    embedding vector(768) -- Store 768-dimension Jina embeddings
+);
+
+-- 3. Create ask_history table to track learning progress
+create table ask_history (
+    id text primary key,
+    question text not null,
+    answer text not null,
+    asked_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    matched_note_id text
+);
+
+-- 4. Create a vector similarity RPC function for cosine similarity matching
+create or replace function match_study_notes (
+  query_embedding vector(768),
+  match_threshold float,
+  match_count int,
+  filter_document_id text default null
+)
+returns table (
+  id text,
+  title text,
+  content text,
+  tags text[],
+  document_id text,
+  document_title text,
+  similarity float
+)
+language plpgsql
+as $$
+begin
+  return query
+  select
+    study_notes.id,
+    study_notes.title,
+    study_notes.content,
+    study_notes.tags,
+    study_notes.document_id,
+    study_notes.document_title,
+    1 - (study_notes.embedding <=> query_embedding) as similarity -- Cosine Similarity formula
+  from study_notes
+  where (filter_document_id is null or study_notes.document_id = filter_document_id)
+    and study_notes.embedding is not null
+    and 1 - (study_notes.embedding <=> query_embedding) > match_threshold
+  order by study_notes.embedding <=> query_embedding
+  limit match_count;
+end;
+$$;
+```
+
+### Phase 3: Building the Universal Parsing Engine
+- A major challenge was parsing arbitrary document uploads (PDF, Excel, Word). We integrated Microsoft's `markitdown` library.
+- This library handles decoding DOCX, XLSX, and PDF content into plain text recursively, eliminating the need for separate parser libraries (like PyPDF2, openpyxl, etc.) and keeping the codebase clean.
+
+### Phase 4: OpenRouter & Multimodal UI Integration
+- Instead of binding the application to a single LLM provider (like OpenAI or Anthropic), we integrated OpenRouter. This provides a unified API endpoint to swap models (such as `Google Gemini`, `Claude 3.5 Sonnet`, or `GPT-4o`) seamlessly without rewriting backend code.
+- Integrated multimodal support allowing users to upload drawings/images, which are converted to Base64 and sent along with textual context to OpenRouter models for vision reasoning.
+
+### Phase 5: Modern UI Development
+- Built the frontend with **Vite + React.js** to enable instant hot-reloading and high runtime performance.
+- Styled with TailwindCSS and implemented a gorgeous **Glassmorphism design language** (translucent backdrops, frosted-glass panels, custom dark-mode gradients).
+- Added Framer Motion for smooth screen transitions and speech-bubble animations.
+- Implemented **Web Speech API** natively for dictation and TTS (Text-to-Speech), offering hands-free learning capabilities directly inside the browser.
+
+---
+
 
 ## 🏗️ Architecture & Tech Stack
 

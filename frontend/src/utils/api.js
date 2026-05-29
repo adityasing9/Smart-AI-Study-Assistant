@@ -1,4 +1,4 @@
-const API_BASE = 'http://127.0.0.1:8000/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'https://backend-seven-wine-16.vercel.app/api';
 
 async function request(url, options = {}) {
   const res = await fetch(`${API_BASE}${url}`, {
