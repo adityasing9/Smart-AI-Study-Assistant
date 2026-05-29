@@ -18,6 +18,23 @@ Built as an AI mini-project, this application allows users to upload any documen
 
 ---
 
+## 🧠 Core Technologies Explained
+
+### 1. The NLP Pipeline: Data Ingestion (How the AI "Reads")
+When a document (PDF, Word, etc.) is uploaded, the system triggers a powerful **Natural Language Processing (NLP)** pipeline:
+- **Text Extraction**: The backend uses NLP libraries (`markitdown`, `pdfminer`) to parse binary files and extract raw, readable text.
+- **Chunking**: Large documents are split into smaller paragraphs (~1500 characters) to optimize the LLM's context window.
+- **Semantic Embedding**: Each text chunk is sent to an embedding model (`jina-embeddings-v2-base-en`). The NLP model converts the text's *semantic meaning* into a **768-dimensional mathematical vector**.
+- **Vector Storage**: These vectors are saved securely into a Supabase database using the `pgvector` extension.
+
+### 2. The RAG Pipeline: Query & Generation (How the AI "Thinks")
+When you ask a question in "Smart AI" mode, the **Retrieval-Augmented Generation (RAG)** pipeline executes:
+- **Retrieval**: The backend converts your question into a 768-dimensional vector and runs a **Cosine Similarity Search** in Supabase to find the top 3 paragraphs that are mathematically "closest" in meaning to your question.
+- **Augmentation**: The backend creates a hidden prompt, injecting those 3 retrieved paragraphs as strict context.
+- **Generation**: The Large Language Model (e.g., Gemini or GPT-4o) reads the augmented prompt and generates a conversational answer based *only* on the retrieved context, effectively eliminating hallucinations.
+
+---
+
 ## 🏗️ Architecture & Tech Stack
 
 ### Frontend
