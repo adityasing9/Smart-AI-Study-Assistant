@@ -268,39 +268,6 @@ def get_history():
     return {"history": history, "count": len(history)}
 
 
-# ───── Admin / Embeddings Utility ─────
-
-@app.get("/api/admin/generate-embeddings")
-def generate_missing_embeddings():
-    """Temporary admin endpoint to generate missing vector embeddings for all notes."""
-    notes = db.get_all_notes()
-    notes_missing = [n for n in notes if n.get("embedding") is None]
-    
-    if not notes_missing:
-        return {"message": "All notes already have embeddings!", "count": 0}
-        
-    success_count = 0
-    errors = []
-    
-    for note in notes_missing:
-        try:
-            content_block = f"Title: {note['title']}\nTags: {', '.join(note.get('tags', []))}\nContent: {note['content']}"
-            embedding = rag_engine.get_embedding(content_block)
-            if embedding:
-                db.update_note_embedding(note["id"], embedding)
-                success_count += 1
-            else:
-                errors.append(f"Failed to generate embedding for note {note['id']}")
-        except Exception as e:
-            errors.append(f"Error for note {note['id']}: {str(e)}")
-            
-    return {
-        "message": f"Generated embeddings for {success_count}/{len(notes_missing)} notes.",
-        "success_count": success_count,
-        "total_missing": len(notes_missing),
-        "errors": errors
-    }
-
 
 
 # ──────────────────────────── Run ────────────────────────────
