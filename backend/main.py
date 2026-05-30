@@ -138,21 +138,26 @@ async def upload_document(file: UploadFile = File(...)):
             md = MarkItDown()
             result = md.convert(tmp_path)
             full_text = result.text_content or ""
+            print(f"[Upload] MarkItDown extracted {len(full_text)} chars from {file.filename}")
         except Exception as convert_err:
             print(f"[Upload] MarkItDown failed for {file.filename}: {convert_err}")
-            # Fallback: only try plain text decode for text-like files
-            text_exts = {'.txt', '.md', '.csv', '.json', '.xml', '.html', '.htm', '.log', '.py', '.js', '.ts', '.java', '.c', '.cpp', '.h', '.css', '.yaml', '.yml', '.toml', '.ini', '.cfg', '.env'}
-            if suffix.lower() in text_exts:
-                try:
-                    full_text = content.decode("utf-8", errors="ignore")
-                except Exception:
-                    pass
         finally:
             # Always clean up the temporary file
             try:
                 os.remove(tmp_path)
             except Exception:
                 pass
+
+        # Fallback: if markitdown returned nothing (or failed), decode directly for text files
+        text_exts = {'.txt', '.md', '.csv', '.json', '.xml', '.html', '.htm', '.log',
+                     '.py', '.js', '.ts', '.java', '.c', '.cpp', '.h', '.css',
+                     '.yaml', '.yml', '.toml', '.ini', '.cfg', '.env'}
+        if not full_text.strip() and suffix.lower() in text_exts:
+            try:
+                full_text = content.decode("utf-8", errors="ignore")
+                print(f"[Upload] Fallback plain-text decode: {len(full_text)} chars")
+            except Exception as decode_err:
+                print(f"[Upload] Fallback decode failed: {decode_err}")
         
         if not full_text or not full_text.strip():
             # Give a helpful error based on file type
