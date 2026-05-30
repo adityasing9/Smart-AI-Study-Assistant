@@ -15,29 +15,52 @@ openai_client = OpenAI(
 )
 
 def get_embedding(text: str) -> list[float]:
-    """Fetch embeddings from OpenRouter using Jina."""
+    """Fetch embeddings — tries Jina AI direct API first, then OpenRouter as fallback."""
+    
+    # ── 1. Jina AI Direct API (free tier, most reliable) ──────────────────
+    jina_key = os.getenv("JINA_API_KEY")
+    if jina_key:
+        try:
+            response = httpx.post(
+                "https://api.jina.ai/v1/embeddings",
+                headers={"Authorization": f"Bearer {jina_key}", "Content-Type": "application/json"},
+                json={"model": "jina-embeddings-v2-base-en", "input": [text]},
+                timeout=20.0
+            )
+            print(f"[Jina Direct] status={response.status_code}")
+            data = response.json()
+            if "data" in data and len(data["data"]) > 0:
+                print("[Jina Direct] Embedding OK ✓")
+                return data["data"][0]["embedding"]
+            else:
+                print(f"[Jina Direct] Unexpected response: {str(data)[:200]}")
+        except Exception as e:
+            print(f"[Jina Direct Error] {e}")
+
+    # ── 2. OpenRouter fallback ─────────────────────────────────────────────
     api_key = os.getenv("OPENROUTER_API_KEY")
     if not api_key:
+        print("[RAG Engine] No OPENROUTER_API_KEY found.")
         return []
     
-    url = "https://openrouter.ai/api/v1/embeddings"
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
-    }
-    payload = {
-        "model": "jinaai/jina-embeddings-v2-base-en",
-        "input": text
-    }
-    
     try:
-        response = httpx.post(url, headers=headers, json=payload, timeout=15.0)
+        response = httpx.post(
+            "https://openrouter.ai/api/v1/embeddings",
+            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+            json={"model": "jinaai/jina-embeddings-v2-base-en", "input": [text]},
+            timeout=20.0
+        )
+        print(f"[OpenRouter Embed] status={response.status_code}, body={response.text[:300]}")
         response.raise_for_status()
         data = response.json()
         if "data" in data and len(data["data"]) > 0:
+            print("[OpenRouter Embed] Embedding OK ✓")
             return data["data"][0]["embedding"]
+        else:
+            print(f"[OpenRouter Embed] Unexpected response: {str(data)[:200]}")
     except Exception as e:
-        print(f"[RAG Engine Error] Failed to get embedding: {e}")
+        print(f"[OpenRouter Embed Error] {e}")
+
     return []
 
 
