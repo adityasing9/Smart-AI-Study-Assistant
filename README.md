@@ -219,6 +219,8 @@ $$;
 ## 🚀 Live Demo
 
 - **Frontend Application**: [https://smart-ai-study-assistant.vercel.app](https://smart-ai-study-assistant.vercel.app)
+  - **Demo Account Email:** `admin@test.com`
+  - **Demo Account Password:** `testing`
 - **Backend API Endpoint**: [https://backend-seven-wine-16.vercel.app](https://backend-seven-wine-16.vercel.app)
 
 
