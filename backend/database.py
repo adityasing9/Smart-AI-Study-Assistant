@@ -227,13 +227,12 @@ def match_study_notes(query_embedding: list, match_threshold: float = 0.5, match
         }
         if filter_document_id:
             params["filter_document_id"] = filter_document_id
+        if user_id:
+            params["p_user_id"] = user_id
             
         try:
             response = supabase.rpc("match_study_notes", params).execute()
             results = response.data
-            # Filter by user_id in application layer since RPC may not support it
-            if user_id and results:
-                results = [r for r in results if r.get("user_id") == user_id]
             return results
         except Exception as e:
             print(f"Supabase RPC match_study_notes failed: {e}. Falling back to local search.")
