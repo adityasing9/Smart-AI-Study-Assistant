@@ -218,8 +218,9 @@ $$;
 
 ## 🚀 Live Demo
 
-- **Frontend Application**: [https://frontend-alpha-six-41.vercel.app](https://frontend-alpha-six-41.vercel.app)
+- **Frontend Application**: [https://smart-ai-study-assistant.vercel.app](https://smart-ai-study-assistant.vercel.app)
 - **Backend API Endpoint**: [https://backend-seven-wine-16.vercel.app](https://backend-seven-wine-16.vercel.app)
+
 
 ---
 
