@@ -5,7 +5,9 @@ import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import AskAI from './pages/AskAI';
 
+// Main App Router Configuration
 export default function App() {
+
   return (
     <>
       <div className="noise-bg" />
