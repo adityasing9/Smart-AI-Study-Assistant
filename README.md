@@ -682,5 +682,6 @@ In `api.js`, we define an `API_BASE` URL that reads the `VITE_API_URL` environme
 
 ---
 
-*Built with ❤️ for better, smarter studying. Good luck with your viva! 🎓*
+*Built with 🧠 for better, smarter studying. Good luck with your viva! 🎓*
+
 
