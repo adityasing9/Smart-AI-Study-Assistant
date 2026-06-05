@@ -1,8 +1,17 @@
 const API_BASE = import.meta.env.VITE_API_URL || 'https://backend-seven-wine-16.vercel.app/api';
 
+function getAuthHeaders() {
+  const token = localStorage.getItem('auth_token');
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
 async function request(url, options = {}) {
   const res = await fetch(`${API_BASE}${url}`, {
-    headers: { 'Content-Type': 'application/json', ...options.headers },
+    headers: { ...getAuthHeaders(), ...options.headers },
     ...options,
   });
   if (!res.ok) {
@@ -13,6 +22,15 @@ async function request(url, options = {}) {
 }
 
 export const api = {
+  // Auth
+  auth: {
+    login: (email, password) =>
+      request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
+    signup: (email, password) =>
+      request('/auth/signup', { method: 'POST', body: JSON.stringify({ email, password }) }),
+    me: () => request('/auth/me'),
+  },
+
   // Notes
   getNotes: (q) => request(`/notes${q ? `?q=${encodeURIComponent(q)}` : ''}`),
   addNote: (data) => request('/notes', { method: 'POST', body: JSON.stringify(data) }),
@@ -20,10 +38,16 @@ export const api = {
 
   // Document Upload
   uploadDocument: async (file) => {
+    const token = localStorage.getItem('auth_token');
     const formData = new FormData();
     formData.append('file', file);
+    const headers = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
     const res = await fetch(`${API_BASE}/upload`, {
       method: 'POST',
+      headers,
       body: formData,
     });
     if (!res.ok) {

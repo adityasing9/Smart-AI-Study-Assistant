@@ -84,7 +84,7 @@ def delete_note_from_vector_store(note_id):
     pass
 
 
-def generate_smart_answer(question, document_id=None, image_data=None):
+def generate_smart_answer(question, document_id=None, image_data=None, user_id=None):
     api_key = os.getenv("OPENROUTER_API_KEY")
 
     if not api_key:
@@ -105,7 +105,8 @@ def generate_smart_answer(question, document_id=None, image_data=None):
             query_embedding=query_embedding,
             match_threshold=0.3,
             match_count=3,
-            filter_document_id=document_id
+            filter_document_id=document_id,
+            user_id=user_id
         )
     except Exception as e:
         return {

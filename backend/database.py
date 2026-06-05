@@ -48,38 +48,49 @@ def _write_db(data):
 
 # ──────────────────────────── Database Operations ────────────────────────────
 
-def get_all_notes():
+def get_all_notes(user_id: str = None):
     if supabase:
         try:
-            response = supabase.table("study_notes").select("*").execute()
+            query = supabase.table("study_notes").select("*")
+            if user_id:
+                query = query.eq("user_id", user_id)
+            response = query.execute()
             return response.data
         except Exception as e:
             print(f"Supabase get_all_notes failed: {e}. Falling back to local JSON.")
             
     db_data = _read_db()
     notes = db_data.get("notes", [])
+    if user_id:
+        notes = [n for n in notes if n.get("user_id") == user_id]
     try:
         notes = sorted(notes, key=lambda n: n.get("created_at", ""), reverse=True)
     except Exception:
         pass
     return notes
 
-def search_notes(query: str):
+def search_notes(query: str, user_id: str = None):
     if supabase:
         try:
-            response = supabase.table("study_notes").select("*").ilike("content", f"%{query}%").execute()
+            q = supabase.table("study_notes").select("*").ilike("content", f"%{query}%")
+            if user_id:
+                q = q.eq("user_id", user_id)
+            response = q.execute()
             return response.data
         except Exception as e:
             print(f"Supabase search_notes failed: {e}. Falling back to local JSON.")
             
     db_data = _read_db()
     query_lower = query.lower()
-    return [
+    notes = [
         n for n in db_data.get("notes", [])
         if query_lower in n.get("title", "").lower() or query_lower in n.get("content", "").lower()
     ]
+    if user_id:
+        notes = [n for n in notes if n.get("user_id") == user_id]
+    return notes
 
-def add_note(title, content, tags=None, document_id=None, document_title=None):
+def add_note(title, content, tags=None, document_id=None, document_title=None, user_id=None):
     if tags is None:
         tags = []
     
@@ -90,6 +101,7 @@ def add_note(title, content, tags=None, document_id=None, document_title=None):
         "tags": tags,
         "document_id": document_id,
         "document_title": document_title,
+        "user_id": user_id,
         "created_at": datetime.utcnow().isoformat() + "Z"
     }
     
@@ -120,10 +132,13 @@ def update_note_embedding(note_id: str, embedding: list):
             break
     _write_db(db_data)
 
-def delete_note(note_id):
+def delete_note(note_id, user_id: str = None):
     if supabase:
         try:
-            supabase.table("study_notes").delete().eq("id", note_id).execute()
+            query = supabase.table("study_notes").delete().eq("id", note_id)
+            if user_id:
+                query = query.eq("user_id", user_id)
+            query.execute()
             return True
         except Exception as e:
             print(f"Supabase delete_note failed: {e}. Deleting from local JSON.")
@@ -136,28 +151,34 @@ def delete_note(note_id):
         return True
     return False
 
-def get_history():
+def get_history(user_id: str = None):
     if supabase:
         try:
-            response = supabase.table("ask_history").select("*").order("asked_at", desc=True).execute()
+            query = supabase.table("ask_history").select("*").order("asked_at", desc=True)
+            if user_id:
+                query = query.eq("user_id", user_id)
+            response = query.execute()
             return response.data
         except Exception as e:
             print(f"Supabase get_history failed: {e}. Falling back to local JSON.")
             
     db_data = _read_db()
     history = db_data.get("history", [])
+    if user_id:
+        history = [h for h in history if h.get("user_id") == user_id]
     try:
         history = sorted(history, key=lambda h: h.get("asked_at", ""), reverse=True)
     except Exception:
         pass
     return history
 
-def add_history_entry(question, answer, matched_note_id=None):
+def add_history_entry(question, answer, matched_note_id=None, user_id=None):
     entry = {
         "id": str(uuid.uuid4())[:8],
         "question": question,
         "answer": answer,
         "matched_note_id": matched_note_id,
+        "user_id": user_id,
         "asked_at": datetime.utcnow().isoformat() + "Z"
     }
     if supabase:
@@ -173,10 +194,13 @@ def add_history_entry(question, answer, matched_note_id=None):
         db_data["history"] = db_data["history"][-50:]
     _write_db(db_data)
 
-def get_documents():
+def get_documents(user_id: str = None):
     if supabase:
         try:
-            response = supabase.table("study_notes").select("document_id, document_title").not_.is_("document_id", "null").execute()
+            query = supabase.table("study_notes").select("document_id, document_title").not_.is_("document_id", "null")
+            if user_id:
+                query = query.eq("user_id", user_id)
+            response = query.execute()
             docs = {}
             for note in response.data:
                 if note.get("document_id"):
@@ -188,11 +212,13 @@ def get_documents():
     db_data = _read_db()
     docs = {}
     for n in db_data.get("notes", []):
+        if user_id and n.get("user_id") != user_id:
+            continue
         if n.get("document_id"):
             docs[n["document_id"]] = n.get("document_title", "Untitled Document")
     return [{"document_id": k, "document_title": v} for k, v in docs.items()]
 
-def match_study_notes(query_embedding: list, match_threshold: float = 0.5, match_count: int = 3, filter_document_id: str = None):
+def match_study_notes(query_embedding: list, match_threshold: float = 0.5, match_count: int = 3, filter_document_id: str = None, user_id: str = None):
     if supabase:
         params = {
             "query_embedding": query_embedding,
@@ -204,7 +230,11 @@ def match_study_notes(query_embedding: list, match_threshold: float = 0.5, match
             
         try:
             response = supabase.rpc("match_study_notes", params).execute()
-            return response.data
+            results = response.data
+            # Filter by user_id in application layer since RPC may not support it
+            if user_id and results:
+                results = [r for r in results if r.get("user_id") == user_id]
+            return results
         except Exception as e:
             print(f"Supabase RPC match_study_notes failed: {e}. Falling back to local search.")
             
@@ -222,6 +252,8 @@ def match_study_notes(query_embedding: list, match_threshold: float = 0.5, match
         return dot_product / (m1 * m2)
 
     for note in db_data.get("notes", []):
+        if user_id and note.get("user_id") != user_id:
+            continue
         if filter_document_id and note.get("document_id") != filter_document_id:
             continue
         embedding = note.get("embedding")

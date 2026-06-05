@@ -1,10 +1,19 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { HiOutlineSparkles } from 'react-icons/hi2';
+import { HiOutlineSparkles, HiOutlineArrowRightOnRectangle } from 'react-icons/hi2';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const isLanding = location.pathname === '/';
+  const isLogin = location.pathname === '/login';
+  const { user, isAuthenticated, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   return (
     <motion.nav
@@ -20,25 +29,42 @@ export default function Navbar() {
             <HiOutlineSparkles className="text-slate-900 text-base" />
           </div>
           <span className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
-            Smart AI <span className="gradient-text"> Study Assistant</span>
+            Smart AI <span className="gradient-text">Study Assistant</span>
           </span>
         </Link>
 
         {/* Nav Links */}
         <div className="flex items-center gap-1 sm:gap-2">
-          {!isLanding && (
+          {isAuthenticated && !isLanding && !isLogin && (
             <>
               <NavLink to="/dashboard" current={location.pathname}>Dashboard</NavLink>
               <NavLink to="/ask" current={location.pathname}>Ask AI</NavLink>
             </>
           )}
-          {isLanding && (
-            <Link
-              to="/dashboard"
-              className="px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-900 gradient-bg hover:opacity-90 transition-opacity shadow-lg shadow-emerald-500/20"
-            >
-              Get Started
-            </Link>
+
+          {isAuthenticated ? (
+            <div className="flex items-center gap-2 ml-2">
+              <span className="hidden sm:inline text-xs text-slate-500 font-medium max-w-[120px] truncate">
+                {user?.email}
+              </span>
+              <button
+                onClick={handleLogout}
+                className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:text-red-600 hover:bg-red-50 transition-all flex items-center gap-1.5"
+                title="Logout"
+              >
+                <HiOutlineArrowRightOnRectangle className="text-base" />
+                <span className="hidden sm:inline">Logout</span>
+              </button>
+            </div>
+          ) : (
+            !isLogin && (
+              <Link
+                to="/login"
+                className="px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-slate-900 gradient-bg hover:opacity-90 transition-opacity shadow-lg shadow-emerald-500/20"
+              >
+                {isLanding ? 'Get Started' : 'Login'}
+              </Link>
+            )
           )}
         </div>
       </div>

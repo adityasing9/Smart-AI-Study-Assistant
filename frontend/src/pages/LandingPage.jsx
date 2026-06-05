@@ -98,14 +98,14 @@ export default function LandingPage() {
                 className="flex items-center gap-3 sm:gap-4 flex-wrap justify-center md:justify-start"
               >
                 <Link
-                  to="/dashboard"
+                  to="/login"
                   className="group px-6 sm:px-8 py-3 rounded-xl text-sm sm:text-base font-semibold text-white gradient-bg hover:opacity-90 transition-all shadow-xl shadow-emerald-500/20 flex items-center gap-2"
                 >
                   Get Started
                   <HiOutlineArrowRight className="group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link
-                  to="/ask"
+                  to="/login"
                   className="px-6 sm:px-8 py-3 rounded-xl text-sm sm:text-base font-semibold text-slate-700 glass hover:bg-slate-900/5 transition-all flex items-center gap-2"
                 >
                   <HiOutlineMicrophone />
@@ -243,7 +243,7 @@ export default function LandingPage() {
                   Start adding notes and let AI handle the rest. Your personal study assistant is waiting.
                 </p>
                 <Link
-                  to="/dashboard"
+                  to="/login"
                   className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 rounded-xl text-sm font-semibold text-white gradient-bg hover:opacity-90 transition-all shadow-xl shadow-emerald-500/20"
                 >
                   Launch Study Brain
