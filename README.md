@@ -42,6 +42,8 @@ When you ask a question in "Smart AI" mode, the **Retrieval-Augmented Generation
 
 ## 🔄 End-to-End System Workflows
 
+![Architecture Diagram](./architecture.png)
+
 This project implements three primary workflows: **Document Ingestion (NLP)**, **Semantic Q&A (RAG)**, and **Multimodal Visual Reasoning**.
 
 ### 1. Document Upload & NLP Indexing Pipeline
